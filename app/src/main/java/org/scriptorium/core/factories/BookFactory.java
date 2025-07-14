@@ -5,7 +5,6 @@ import org.scriptorium.core.domain.Book; // Your updated Book entity
 import org.scriptorium.core.domain.Genre;
 import org.scriptorium.core.domain.Publisher;
 import org.scriptorium.core.dto.OpenLibraryBook;
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

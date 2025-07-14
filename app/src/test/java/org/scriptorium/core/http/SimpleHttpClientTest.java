@@ -1,8 +1,6 @@
 package org.scriptorium.core.http;
 
 import org.junit.jupiter.api.Test;
-import org.scriptorium.core.http.SimpleHttpClient;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SimpleHttpClientTest {

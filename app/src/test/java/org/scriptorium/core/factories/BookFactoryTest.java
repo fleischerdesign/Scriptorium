@@ -1,16 +1,11 @@
 package org.scriptorium.core.factories;
 
-import org.scriptorium.core.domain.Author; // Import Author Klasse
 import org.scriptorium.core.domain.Book;
 import org.scriptorium.core.domain.Genre; // Import Genre Klasse
-import org.scriptorium.core.domain.Publisher; // Import Publisher Klasse
 import org.scriptorium.core.dto.OpenLibraryBook;
 import org.junit.jupiter.api.Test;
-import java.time.Year; // Für das aktuelle Jahr, falls verwendet
 import java.util.Collections; // Für Collections.emptyList() oder Collections.singletonList()
 import java.util.List;
-import java.util.Optional; // Falls Sie Optional im Test nutzen möchten
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class BookFactoryTest {

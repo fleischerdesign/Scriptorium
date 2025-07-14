@@ -89,7 +89,7 @@ public class ImportBookCommand implements Command {
                 System.out.printf("Selected for import (but not yet saved): %s by %s%n",
                                   selectedBook.getTitle(), selectedAuthorsDisplay);
                 
-                // TODO: Actual import (saving) logic here - this remains your next step
+                // TODO: Actual import (saving) logic here
                 System.out.println("This book would now be saved to your library.");
 
             } else {

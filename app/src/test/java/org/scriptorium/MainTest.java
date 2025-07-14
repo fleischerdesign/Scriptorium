@@ -3,10 +3,5 @@
  */
 package org.scriptorium;
 
-import org.junit.jupiter.api.Test;
-import org.scriptorium.application.Main;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 class MainTest {
 }
