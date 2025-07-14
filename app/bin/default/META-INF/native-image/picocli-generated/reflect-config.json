@@ -1,12 +1,9 @@
 [
   {
-    "name" : "org.scriptorium.cli.commands.ImportBookCommand",
+    "name" : "org.scriptorium.cli.commands.ExitCommand",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
     "allDeclaredMethods" : true,
-    "allPublicMethods" : true,
-    "fields" : [
-      { "name" : "title" }
-    ]
+    "allPublicMethods" : true
   }
 ]

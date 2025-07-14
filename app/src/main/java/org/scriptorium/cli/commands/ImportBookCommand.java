@@ -10,20 +10,42 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+/**
+ * Picocli command for importing books from the OpenLibrary API.
+ *
+ * This command allows users to search for books by title and select one to "import"
+ * (currently, this is a placeholder for future saving functionality).
+ * It supports both direct command-line arguments and interactive input.
+ */
 @Command(name = "import-book", description = "Imports a book from OpenLibrary.")
 public class ImportBookCommand implements Runnable {
 
     private final BookImportService bookImportService;
     private final Scanner scanner;
 
+    /**
+     * Optional command-line parameter for the book title.
+     * If not provided, the command will prompt the user for input.
+     */
     @Parameters(index = "0", description = "The title of the book to search for.", arity = "0..1")
     private String title;
 
+    /**
+     * Constructs an {@code ImportBookCommand} with its required dependencies.
+     *
+     * @param bookImportService The service responsible for fetching book data.
+     * @param scanner The scanner used for interactive user input.
+     */
     public ImportBookCommand(BookImportService bookImportService, Scanner scanner) {
         this.bookImportService = bookImportService;
         this.scanner = scanner;
     }
 
+    /**
+     * Executes the import book command.
+     * It either uses the provided command-line argument or prompts the user for a title,
+     * fetches books, displays them, and allows the user to select one.
+     */
     @Override
     public void run() {
         String titleSearchQuery = title;

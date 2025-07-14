@@ -3,43 +3,44 @@ package org.scriptorium.core.domain;
 import java.time.Year;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID; // Für eine interne, eindeutige ID
+import java.util.UUID;
 
 /**
- * Repräsentiert ein literarisches Werk in der Bibliothek.
- * Ein Werk ist die abstrakte Einheit (z.B. "Der Herr der Ringe"),
- * unabhängig von einer spezifischen Ausgabe oder einem physischen Exemplar.
+ * Represents a literary work in the Scriptorium domain model.
+ * A work is an abstract unit (e.g., "The Lord of the Rings"),
+ * independent of a specific edition or physical copy.
  */
-public class Book { // Besser wäre hier vielleicht "Work" oder "LiteraryWork"
-    // Interne, eindeutige ID für das Werk
-    private final String id; // UUID als String
+public class Book {
+    // Internal, unique ID for the work
+    private final String id;
 
-    // Kerninformationen über das Werk
+    // Core information about the work
     private String title;
-    private List<Author> authors; // Liste von Autoren
+    private List<Author> authors;
     private Genre genre;
-    private String description; // Optionale Beschreibung
+    private String description;
 
-    // Optional: Primäre ISBN(s), falls bekannt und für das Werk relevant
-    // Kann leere Liste sein, wenn keine ISBNs bekannt sind oder das Medium keine hat.
-    private List<String> isbns; // Kann mehrere Ausgaben eines Werkes repräsentieren
+    // Optional: Primary ISBN(s), if known and relevant for the work
+    // Can be an empty list if no ISBNs are known or the medium does not have any.
+    private List<String> isbns;
 
     // Constructors
-    // Hinweis: Für eine Werk-Klasse sind publicationYear und Publisher eher Ausgaben-Details.
-    // Ich lasse sie hier der Einfachheit halber noch drin, aber ideal wäre eine Trennung.
-    private int publicationYear; // Kann das Jahr der ersten Veröffentlichung des Werks sein
-    private Publisher mainPublisher; // Haupt- oder Erstverlag des Werks
+    // Note: For a work class, publicationYear and Publisher are more edition-specific details.
+    // I'm keeping them here for simplicity, but ideally, they would be separated.
+    private int publicationYear;
+    private Publisher mainPublisher;
 
     /**
-     * Konstruktor für ein neues Werk. Generiert automatisch eine UUID.
+     * Constructs a new Book instance. Automatically generates a UUID for the book.
      *
-     * @param title Buchtitel (mindestens 2 Zeichen)
-     * @param authors Liste der Autor-Objekte (darf nicht leer sein)
-     * @param genre Genre/Kategorie (darf nicht null sein)
-     * @param publicationYear Erscheinungsjahr der Erstveröffentlichung des Werks (optional, kann 0 sein)
-     * @param mainPublisher Hauptverlag des Werks (optional, kann null sein)
-     * @param description Optionale Beschreibung des Werks
-     * @param isbns Optionale Liste von ISBNs, die zu diesem Werk gehören
+     * @param title The title of the book (must be at least 2 characters).
+     * @param authors A list of {@link Author} objects (must not be empty).
+     * @param genre The {@link Genre} of the book (must not be null).
+     * @param publicationYear The year of the book's first publication (optional, can be 0 for unknown).
+     * @param mainPublisher The main or primary publisher of the work (optional, can be null).
+     * @param description An optional description of the work.
+     * @param isbns An optional list of ISBNs associated with this work.
+     * @throws IllegalArgumentException if title, authors, or genre are invalid, or if publication year is out of range.
      */
     public Book(String title,
                 List<Author> authors,
@@ -48,85 +49,152 @@ public class Book { // Besser wäre hier vielleicht "Work" oder "LiteraryWork"
                 Publisher mainPublisher,
                 String description,
                 List<String> isbns) {
-        this.id = UUID.randomUUID().toString(); // Generiert eine eindeutige ID
+        this.id = UUID.randomUUID().toString();
 
-        setTitle(title); // Nutzt Setter für Validierung
-        setAuthors(authors); // Nutzt Setter für Validierung
-        setGenre(genre); // Nutzt Setter für Validierung
+        setTitle(title);
+        setAuthors(authors);
+        setGenre(genre);
 
-        // Optional: Validierung für publicationYear
-        if (publicationYear != 0) { // Wenn 0 erlaubt ist für unbekannt
+        // Optional: Validation for publicationYear
+        if (publicationYear != 0) {
              int currentYear = Year.now().getValue();
              if (publicationYear < 1450 || publicationYear > currentYear) {
-                 throw new IllegalArgumentException("Ungültiges Erscheinungsjahr für das Werk");
+                 throw new IllegalArgumentException("Invalid publication year for the work");
              }
         }
         this.publicationYear = publicationYear;
-        this.mainPublisher = mainPublisher; // Publisher kann hier null sein
-        this.description = description; // Beschreibung kann null sein
-        this.isbns = isbns != null ? isbns : List.of(); // Stellen Sie sicher, dass es nie null ist
+        this.mainPublisher = mainPublisher;
+        this.description = description;
+        this.isbns = isbns != null ? isbns : List.of();
     }
 
-    // --- GETTER ---
+    /**
+     * Returns the unique identifier of the book.
+     * @return The book's ID.
+     */
     public String getId() { return id; }
+
+    /**
+     * Returns the title of the book.
+     * @return The book's title.
+     */
     public String getTitle() { return title; }
+
+    /**
+     * Returns the list of authors for the book.
+     * @return A list of {@link Author} objects.
+     */
     public List<Author> getAuthors() { return authors; }
+
+    /**
+     * Returns the genre of the book.
+     * @return The book's {@link Genre}.
+     */
     public Genre getGenre() { return genre; }
+
+    /**
+     * Returns the first publication year of the book.
+     * @return The publication year.
+     */
     public int getPublicationYear() { return publicationYear; }
+
+    /**
+     * Returns the main publisher of the book.
+     * @return The {@link Publisher} object.
+     */
     public Publisher getMainPublisher() { return mainPublisher; }
+
+    /**
+     * Returns the description of the book.
+     * @return The book's description.
+     */
     public String getDescription() { return description; }
+
+    /**
+     * Returns the list of ISBNs associated with the book.
+     * @return A list of ISBN strings.
+     */
     public List<String> getIsbns() { return isbns; }
 
 
-    // --- SETTER (für veränderliche Attribute, wenn die Entität nicht komplett unveränderlich sein muss) ---
-    // Wenn die Entität komplett unveränderlich sein soll, dann nur über den Konstruktor und ggf. eine "with..." Methode
-
+    /**
+     * Sets the title of the book.
+     * @param title The new title for the book.
+     * @throws IllegalArgumentException if the title is null, blank, or too short.
+     */
     public void setTitle(String title) {
         if (title == null || title.isBlank()) {
-            throw new IllegalArgumentException("Titel darf nicht leer sein");
+            throw new IllegalArgumentException("Title cannot be empty");
         }
         if (title.length() < 2) {
-            throw new IllegalArgumentException("Titel muss mindestens 2 Zeichen haben");
+            throw new IllegalArgumentException("Title must have at least 2 characters");
         }
         this.title = title;
     }
 
+    /**
+     * Sets the authors of the book.
+     * @param authors The new list of {@link Author} objects.
+     * @throws IllegalArgumentException if the list of authors is null, empty, or contains null entries.
+     */
     public void setAuthors(List<Author> authors) {
         if (authors == null || authors.isEmpty()) {
-            throw new IllegalArgumentException("Ein Werk muss mindestens einen Autor haben");
+            throw new IllegalArgumentException("A work must have at least one author");
         }
         if (authors.stream().anyMatch(Objects::isNull)) {
-            throw new IllegalArgumentException("Autor-Liste darf keine Null-Einträge enthalten");
+            throw new IllegalArgumentException("Author list cannot contain null entries");
         }
         this.authors = authors;
     }
 
+    /**
+     * Sets the genre of the book.
+     * @param genre The new {@link Genre} for the book.
+     * @throws NullPointerException if the genre is null.
+     */
     public void setGenre(Genre genre) {
-        this.genre = Objects.requireNonNull(genre, "Genre darf nicht null sein");
+        this.genre = Objects.requireNonNull(genre, "Genre cannot be null");
     }
 
-    // Optional Setter für publicationYear, mainPublisher, description, isbns
+    /**
+     * Sets the publication year of the book.
+     * @param publicationYear The new publication year.
+     */
     public void setPublicationYear(int publicationYear) {
-        // Hier ggf. wieder Validierung einfügen, wenn es über Setter geändert werden darf
         this.publicationYear = publicationYear;
     }
 
+    /**
+     * Sets the main publisher of the book.
+     * @param mainPublisher The new {@link Publisher} for the book.
+     */
     public void setMainPublisher(Publisher mainPublisher) {
         this.mainPublisher = mainPublisher;
     }
 
+    /**
+     * Sets the description of the book.
+     * @param description The new description.
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * Sets the list of ISBNs for the book.
+     * @param isbns The new list of ISBN strings.
+     */
     public void setIsbns(List<String> isbns) {
-        // Hier könnten Sie auch Validierung für ISBN-Formate hinzufügen
         this.isbns = isbns != null ? isbns : List.of();
     }
 
 
     /**
-     * Equals basiert auf der internen ID, da diese das Werk eindeutig identifiziert.
+     * Compares this Book object to another object for equality.
+     * Equality is based on the internal unique ID.
+     *
+     * @param o The object to compare with.
+     * @return true if the objects are equal, false otherwise.
      */
     @Override
     public boolean equals(Object o) {
@@ -137,7 +205,10 @@ public class Book { // Besser wäre hier vielleicht "Work" oder "LiteraryWork"
     }
 
     /**
-     * HashCode basiert auf der internen ID.
+     * Returns a hash code value for the Book object.
+     * The hash code is based on the internal unique ID.
+     *
+     * @return A hash code value for this object.
      */
     @Override
     public int hashCode() {
@@ -145,7 +216,10 @@ public class Book { // Besser wäre hier vielleicht "Work" oder "LiteraryWork"
     }
 
     /**
-     * Informative String-Darstellung.
+     * Returns a string representation of the Book object.
+     * Provides an informative string including ID, title, authors, genre, publication year, and main publisher.
+     *
+     * @return A string representation of the object.
      */
     @Override
     public String toString() {

@@ -11,15 +11,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * A factory class for creating domain model objects, such as {@link Book},
+ * from data transfer objects (DTOs) or other raw data sources.
+ */
 public class BookFactory {
 
     /**
-     * Creates a domain Book entity from an OpenLibraryBook DTO.
-     * This factory maps API-specific data to your rich domain model,
-     * handling multiple authors, optional fields, and ISBN collection.
+     * Creates a domain {@link Book} entity from an {@link OpenLibraryBook} DTO.
+     *
+     * This method is responsible for the complex logic of mapping API-specific data
+     * to the application's rich domain model. It handles missing or malformed data
+     * by providing sensible defaults, ensuring that the created {@code Book} object
+     * is always in a valid state.
      *
      * @param apiBook The DTO received from the Open Library API.
-     * @return A new Book domain entity.
+     * @return A new, fully-populated {@code Book} domain entity.
      */
     public Book fromOpenLibraryBook(OpenLibraryBook apiBook) {
         // --- 1. Handle Title ---

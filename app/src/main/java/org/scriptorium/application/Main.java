@@ -10,7 +10,21 @@ import org.jline.reader.EndOfFileException;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
+/**
+ * The main entry point for the Scriptorium CLI application.
+ *
+ * This class is responsible for initializing Picocli and determining whether to run
+ * in interactive shell mode or to execute a single command based on the provided arguments.
+ */
 public class Main {
+
+    /**
+     * Application entry point.
+     *
+     * @param args Command-line arguments. If arguments are provided, the application
+     *             runs in single-command mode. If no arguments are present, it launches
+     *             the interactive JLine3 shell.
+     */
     public static void main(String[] args) {
         CommandLine cmd = new CommandLine(new ScriptoriumCommand(), new DependencyFactory());
 

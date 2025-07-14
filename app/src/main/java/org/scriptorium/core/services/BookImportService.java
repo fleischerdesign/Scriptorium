@@ -16,16 +16,32 @@ import java.util.stream.Collectors;
 import java.net.URLEncoder;
 import java.util.List;
 
+/**
+ * Service class responsible for handling the logic of importing books from the OpenLibrary API.
+ */
 public class BookImportService {
     private final SimpleHttpClient httpClient;
     private final BookFactory bookFactory;
     private final String apiBaseUrl = "https://openlibrary.org";
 
+    /**
+     * Constructs a new BookImportService with its required dependencies.
+     *
+     * @param httpClient  The client for making HTTP requests to the OpenLibrary API.
+     * @param bookFactory The factory for converting API DTOs into domain objects.
+     */
     public BookImportService(SimpleHttpClient httpClient, BookFactory bookFactory) {
         this.httpClient = httpClient;
         this.bookFactory = bookFactory;
     }
 
+    /**
+     * Searches for books by title using the OpenLibrary API and returns them as a list of domain objects.
+     *
+     * @param title The title of the book to search for.
+     * @return A list of {@link Book} objects matching the search query.
+     * @throws BookImportException if the API request fails or the response cannot be parsed.
+     */
     public List<Book> importBooksByTitle(String title) throws BookImportException {
         try {
             String url = apiBaseUrl + "/search.json?title=" + URLEncoder.encode(title, "UTF-8");

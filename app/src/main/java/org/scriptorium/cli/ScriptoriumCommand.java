@@ -5,6 +5,12 @@ import org.scriptorium.cli.commands.ImportBookCommand;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;
 
+/**
+ * The main command container for the Scriptorium CLI.
+ *
+ * This class acts as the entry point for Picocli, defining the main command
+ * and listing all available subcommands. It also enables standard help options.
+ */
 @Command(
     name = "scriptorium",
     mixinStandardHelpOptions = true,
