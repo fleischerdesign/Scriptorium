@@ -21,7 +21,7 @@ public class BookFactory {
      * @param apiBook The DTO received from the Open Library API.
      * @return A new Book domain entity.
      */
-    public static Book fromOpenLibraryBook(OpenLibraryBook apiBook) {
+    public Book fromOpenLibraryBook(OpenLibraryBook apiBook) {
         // --- 1. Handle Title ---
         // Ensure title is never null or blank for the Book entity
         String title = Optional.ofNullable(apiBook.getTitle())

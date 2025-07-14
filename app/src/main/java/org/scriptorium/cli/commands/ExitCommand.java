@@ -1,15 +1,13 @@
 package org.scriptorium.cli.commands;
 
-import org.scriptorium.cli.Command;
+import picocli.CommandLine.Command;
 
-public class ExitCommand implements Command {
-    @Override
-    public String getName() {
-        return "exit";
-    }
+@Command(name = "exit", description = "Exits the interactive shell.")
+public class ExitCommand implements Runnable {
 
     @Override
-    public void execute() {
+    public void run() {
         System.out.println("Exiting...");
+        // JLine will handle the actual exit
     }
 }

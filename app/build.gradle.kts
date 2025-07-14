@@ -9,6 +9,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
+    `java-library`
 }
 
 repositories {
@@ -25,6 +26,11 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-annotations:2.17.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0")
+
+    // Picocli for CLI
+    implementation("info.picocli:picocli:4.7.6")
+    implementation("info.picocli:picocli-shell-jline3:4.7.6")
+    annotationProcessor("info.picocli:picocli-codegen:4.7.6")
 }
 
 testing {

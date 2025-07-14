@@ -18,10 +18,12 @@ import java.util.List;
 
 public class BookImportService {
     private final SimpleHttpClient httpClient;
+    private final BookFactory bookFactory;
     private final String apiBaseUrl = "https://openlibrary.org";
 
-    public BookImportService(SimpleHttpClient httpClient) {
+    public BookImportService(SimpleHttpClient httpClient, BookFactory bookFactory) {
         this.httpClient = httpClient;
+        this.bookFactory = bookFactory;
     }
 
     public List<Book> importBooksByTitle(String title) throws BookImportException {
@@ -72,7 +74,7 @@ public class BookImportService {
                 return response.getDocs().stream()
                     .map(bookDto -> {
                         System.out.println("Processing book: " + bookDto.getTitle());
-                        return BookFactory.fromOpenLibraryBook(bookDto);
+                        return bookFactory.fromOpenLibraryBook(bookDto);
                     })
                     .collect(Collectors.toList());
             } catch (JsonProcessingException e) {
@@ -83,7 +85,7 @@ public class BookImportService {
                 List<OpenLibraryBook> books = mapper.convertValue(docsNode,
                     new TypeReference<List<OpenLibraryBook>>() {});
                 return books.stream()
-                    .map(BookFactory::fromOpenLibraryBook)
+                    .map(bookFactory::fromOpenLibraryBook)
                     .collect(Collectors.toList());
             }
         } catch (Exception e) {

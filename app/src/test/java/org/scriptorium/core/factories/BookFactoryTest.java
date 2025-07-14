@@ -21,7 +21,8 @@ class BookFactoryTest {
         apiBook.setIsbn13(List.of("978-0987654321")); // Eine weitere ISBN-13
         apiBook.setFirstPublishYear(2023); // Explizites Erscheinungsjahr
 
-        Book book = BookFactory.fromOpenLibraryBook(apiBook);
+        BookFactory factory = new BookFactory();
+        Book book = factory.fromOpenLibraryBook(apiBook);
 
         assertNotNull(book.getId(), "Book ID should be generated and not null"); // ID sollte generiert werden
         assertEquals("Test Book Title", book.getTitle(), "Title should match the API DTO");
@@ -62,7 +63,8 @@ class BookFactoryTest {
         apiBook.setFirstPublishYear(null); // Erscheinungsjahr ist null
         // Keine Beschreibung gesetzt, sollte null bleiben
 
-        Book book = BookFactory.fromOpenLibraryBook(apiBook);
+        BookFactory factory = new BookFactory();
+        Book book = factory.fromOpenLibraryBook(apiBook);
 
         assertNotNull(book.getId(), "Book ID should still be generated when data is missing");
         assertEquals("Untitled Book", book.getTitle(), "Title should default to 'Untitled Book'");
@@ -96,7 +98,8 @@ class BookFactoryTest {
         apiBook.setIsbn13(Collections.emptyList());
         apiBook.setFirstPublishYear(null);
 
-        Book book = BookFactory.fromOpenLibraryBook(apiBook);
+        BookFactory factory = new BookFactory();
+        Book book = factory.fromOpenLibraryBook(apiBook);
 
         assertEquals("Title from Empty Lists Test", book.getTitle());
 
@@ -126,7 +129,8 @@ class BookFactoryTest {
         // Keine ISBNs gesetzt
         apiBook.setFirstPublishYear(null); // Kein Publikationsjahr
 
-        Book book = BookFactory.fromOpenLibraryBook(apiBook);
+        BookFactory factory = new BookFactory();
+        Book book = factory.fromOpenLibraryBook(apiBook);
 
         assertEquals("Book with minimal data", book.getTitle());
         assertEquals("Single Author", book.getAuthors().get(0).getName());
