@@ -1,4 +1,4 @@
-package org.scriptorium.cli.commands;
+package org.scriptorium.cli.commands.book;
 
 import org.scriptorium.core.domain.Author;
 import org.scriptorium.core.domain.Book;
@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
  * (currently, this is a placeholder for future saving functionality).
  * It supports both direct command-line arguments and interactive input.
  */
-@Command(name = "import-book", description = "Imports a book from OpenLibrary.")
-public class ImportBookCommand implements Runnable {
+@Command(name = "import", description = "Imports a book from OpenLibrary.")
+public class BookImportCommand implements Runnable {
 
     private final BookImportService bookImportService;
     private final Scanner scanner;
@@ -36,7 +36,7 @@ public class ImportBookCommand implements Runnable {
      * @param bookImportService The service responsible for fetching book data.
      * @param scanner The scanner used for interactive user input.
      */
-    public ImportBookCommand(BookImportService bookImportService, Scanner scanner) {
+    public BookImportCommand(BookImportService bookImportService, Scanner scanner) {
         this.bookImportService = bookImportService;
         this.scanner = scanner;
     }

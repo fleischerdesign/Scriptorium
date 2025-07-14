@@ -1,6 +1,6 @@
 package org.scriptorium.config;
 
-import org.scriptorium.cli.commands.ImportBookCommand;
+import org.scriptorium.cli.commands.book.BookImportCommand;
 import org.scriptorium.core.factories.BookFactory;
 import org.scriptorium.core.http.SimpleHttpClient;
 import org.scriptorium.core.services.BookImportService;
@@ -34,8 +34,8 @@ public class DependencyFactory implements CommandLine.IFactory {
     @Override
     public <K> K create(Class<K> cls) throws Exception {
         // Check which command Picocli wants and inject the required services.
-        if (cls.isAssignableFrom(ImportBookCommand.class)) {
-            return (K) new ImportBookCommand(bookImportService, scanner);
+        if (cls.isAssignableFrom(BookImportCommand.class)) {
+            return (K) new BookImportCommand(bookImportService, scanner);
         }
 
         // For commands with no dependencies, or for Picocli's internal classes,
