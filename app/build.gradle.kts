@@ -20,6 +20,7 @@ repositories {
 dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
+    implementation(libs.sqlite.jdbc)
     
     // Jackson for JSON processing
     implementation("com.fasterxml.jackson.core:jackson-core:2.17.0")
@@ -31,6 +32,9 @@ dependencies {
     implementation("info.picocli:picocli:4.7.6")
     implementation("info.picocli:picocli-shell-jline3:4.7.6")
     annotationProcessor("info.picocli:picocli-codegen:4.7.6")
+
+    // Mockito for testing
+    testImplementation("org.mockito:mockito-core:5.12.0")
 }
 
 testing {
