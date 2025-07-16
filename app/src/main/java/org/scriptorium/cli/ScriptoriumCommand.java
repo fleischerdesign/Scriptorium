@@ -1,8 +1,6 @@
 package org.scriptorium.cli;
 
 import org.scriptorium.cli.commands.ExitCommand;
-import org.scriptorium.cli.commands.book.BookImportCommand;
-
 import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;
 
@@ -18,9 +16,10 @@ import picocli.CommandLine.HelpCommand;
     version = "Scriptorium 1.0",
     description = "A book management CLI.",
     subcommands = {
-        BookCommand.class, // All book-related commands are now nested under 'book'
+        BookCommand.class,
+        UserCommand.class,
         ExitCommand.class,
-        HelpCommand.class // Picocli's built-in help command
+        HelpCommand.class
     }
 )
 public class ScriptoriumCommand {

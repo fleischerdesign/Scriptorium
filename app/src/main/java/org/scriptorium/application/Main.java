@@ -1,7 +1,8 @@
 package org.scriptorium.application;
 
 import org.scriptorium.cli.ScriptoriumCommand;
-import org.scriptorium.config.DependencyFactory;
+import org.scriptorium.core.factories.DependencyFactory;
+
 import picocli.CommandLine;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
