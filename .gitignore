@@ -1,5 +1,8 @@
-# Ignore Gradle project-specific cache directory
+# Ignore Gradle project-specific directorys
 .gradle
+/build/
+/out/
+
 # Ignore direnv
 .direnv
 
@@ -8,3 +11,18 @@ scriptorium.db
 
 # Ignore Gradle build output directory
 build
+
+# Virtual Machine crash logs
+hs_err_pid*.log
+
+# Unit test reports
+/test-results/
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+
+# ignore compilations
+app/bin/
