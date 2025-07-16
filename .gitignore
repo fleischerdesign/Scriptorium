@@ -3,5 +3,8 @@
 # Ignore direnv
 .direnv
 
+# Ignore SQLite Database File
+scriptorium.db
+
 # Ignore Gradle build output directory
 build
