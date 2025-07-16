@@ -8,7 +8,7 @@ public class Author {
     private String name;
 
     /**
-     * Default constructor for Author. Required for some frameworks (e.g., JSON deserialization).
+     * Default constructor for Author. Required for some frameworks.
      */
     public Author() {}
 
