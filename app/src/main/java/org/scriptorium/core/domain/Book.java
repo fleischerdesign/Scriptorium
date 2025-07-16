@@ -3,16 +3,14 @@ package org.scriptorium.core.domain;
 import java.time.Year;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
-
 /**
  * Represents a literary work in the Scriptorium domain model.
  * A work is an abstract unit (e.g., "The Lord of the Rings"),
  * independent of a specific edition or physical copy.
  */
 public class Book {
-    // Internal, unique ID for the work
-    private final String id;
+    // Database-generated ID
+    private Long id;
 
     // Core information about the work
     private String title;
@@ -20,18 +18,22 @@ public class Book {
     private Genre genre;
     private String description;
 
+    private int publicationYear;
+    private Publisher mainPublisher;
+
     // Optional: Primary ISBN(s), if known and relevant for the work
     // Can be an empty list if no ISBNs are known or the medium does not have any.
     private List<String> isbns;
 
     // Constructors
-    // Note: For a work class, publicationYear and Publisher are more edition-specific details.
-    // I'm keeping them here for simplicity, but ideally, they would be separated.
-    private int publicationYear;
-    private Publisher mainPublisher;
+    /**
+     * Default constructor required for JDBC to instantiate objects from ResultSet.
+     */
+    public Book() {
+    }
 
     /**
-     * Constructs a new Book instance. Automatically generates a UUID for the book.
+     * Constructs a new Book instance with core details.
      *
      * @param title The title of the book (must be at least 2 characters).
      * @param authors A list of {@link Author} objects (must not be empty).
@@ -49,7 +51,6 @@ public class Book {
                 Publisher mainPublisher,
                 String description,
                 List<String> isbns) {
-        this.id = UUID.randomUUID().toString();
 
         setTitle(title);
         setAuthors(authors);
@@ -72,7 +73,15 @@ public class Book {
      * Returns the unique identifier of the book.
      * @return The book's ID.
      */
-    public String getId() { return id; }
+    public Long getId() { return id; }
+
+    /**
+     * Sets the unique identifier of the book.
+     * @param id The new ID for the book.
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     /**
      * Returns the title of the book.
@@ -201,7 +210,14 @@ public class Book {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Book book = (Book) o;
-        return id.equals(book.id);
+        // Equality based on ID if available, otherwise on a business key (e.g., title + first author)
+        if (id != null && book.id != null) {
+            return Objects.equals(id, book.id);
+        }
+        return Objects.equals(title, book.title) &&
+               Objects.equals(authors, book.authors) &&
+               Objects.equals(genre, book.genre) &&
+               publicationYear == book.publicationYear;
     }
 
     /**
@@ -212,7 +228,10 @@ public class Book {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        if (id != null) {
+            return Objects.hash(id);
+        }
+        return Objects.hash(title, authors, genre, publicationYear);
     }
 
     /**
@@ -224,12 +243,13 @@ public class Book {
     @Override
     public String toString() {
         return "Book{" +
-               "id='" + id + '\'' +
+               "id=" + id +
                ", title='" + title + '\'' +
                ", authors=" + authors +
                ", genre=" + genre +
                ", publicationYear=" + publicationYear +
                ", mainPublisher=" + mainPublisher +
+               ", isbns=" + isbns +
                '}';
     }
 }
