@@ -3,6 +3,7 @@ package org.scriptorium.core.http;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 
 /**
@@ -19,7 +20,7 @@ public class SimpleHttpClient {
      * @throws Exception if an I/O error occurs or the connection fails.
      */
     public String get(String urlString) throws Exception {
-        URL url = new URL(urlString);
+        URL url = new URI(urlString).toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         
