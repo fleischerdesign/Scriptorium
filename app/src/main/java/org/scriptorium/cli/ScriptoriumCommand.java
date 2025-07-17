@@ -18,6 +18,7 @@ import picocli.CommandLine.HelpCommand;
     subcommands = {
         BookCommand.class,
         UserCommand.class,
+        AuthorCommand.class, // Add AuthorCommand
         ExitCommand.class,
         HelpCommand.class
     }

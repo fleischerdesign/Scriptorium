@@ -2,6 +2,7 @@ package org.scriptorium.core.factories;
 
 import org.scriptorium.cli.commands.book.BookImportCommand;
 import org.scriptorium.core.http.SimpleHttpClient;
+import org.scriptorium.core.services.AuthorService;
 import org.scriptorium.core.services.BookImportService;
 import org.scriptorium.cli.BookCommand;
 import org.scriptorium.cli.UserCommand;
@@ -40,8 +41,9 @@ public class DependencyFactory implements CommandLine.IFactory {
     private final BookImportService bookImportService = new BookImportService(httpClient, bookFactory);
     private final UserRepository userRepository = new JdbcUserRepository("jdbc:sqlite:scriptorium.db");
     private final UserService userService = new UserService(userRepository);
-
     private final AuthorRepository authorRepository = new JdbcAuthorRepository("jdbc:sqlite:scriptorium.db");
+    private final AuthorService authorService = new AuthorService(authorRepository);
+
     private final PublisherRepository publisherRepository = new JdbcPublisherRepository("jdbc:sqlite:scriptorium.db");
     private final BookRepository bookRepository = new JdbcBookRepository("jdbc:sqlite:scriptorium.db", authorRepository, publisherRepository);
     private final BookService bookService = new BookService(bookRepository);
@@ -96,6 +98,24 @@ public class DependencyFactory implements CommandLine.IFactory {
         }
         if (cls.isAssignableFrom(org.scriptorium.cli.commands.book.BookDeleteCommand.class)) {
             return (K) new org.scriptorium.cli.commands.book.BookDeleteCommand(bookService);
+        }
+        if (cls.isAssignableFrom(org.scriptorium.cli.AuthorCommand.class)) {
+            return (K) new org.scriptorium.cli.AuthorCommand();
+        }
+        if (cls.isAssignableFrom(org.scriptorium.cli.commands.author.AuthorCreateCommand.class)) {
+            return (K) new org.scriptorium.cli.commands.author.AuthorCreateCommand(authorService);
+        }
+        if (cls.isAssignableFrom(org.scriptorium.cli.commands.author.AuthorShowCommand.class)) {
+            return (K) new org.scriptorium.cli.commands.author.AuthorShowCommand(authorService);
+        }
+        if (cls.isAssignableFrom(org.scriptorium.cli.commands.author.AuthorListCommand.class)) {
+            return (K) new org.scriptorium.cli.commands.author.AuthorListCommand(authorService);
+        }
+        if (cls.isAssignableFrom(org.scriptorium.cli.commands.author.AuthorUpdateCommand.class)) {
+            return (K) new org.scriptorium.cli.commands.author.AuthorUpdateCommand(authorService);
+        }
+        if (cls.isAssignableFrom(org.scriptorium.cli.commands.author.AuthorDeleteCommand.class)) {
+            return (K) new org.scriptorium.cli.commands.author.AuthorDeleteCommand(authorService);
         }
 
         // For commands with no dependencies, or for Picocli's internal classes,
