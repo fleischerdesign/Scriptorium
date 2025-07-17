@@ -40,4 +40,12 @@ public interface UserRepository {
      * @param id The ID of the user to delete.
      */
     void deleteById(Long id);
+
+    /**
+     * Retrieves a user by its email address.
+     *
+     * @param email The email address of the user to retrieve.
+     * @return An Optional containing the user if found, or an empty Optional otherwise.
+     */
+    Optional<User> findByEmail(String email);
 }

@@ -15,10 +15,10 @@ public class JdbcUserRepository implements UserRepository {
 
     public JdbcUserRepository(String dbUrl) {
         this.dbUrl = dbUrl;
-        init();
     }
 
-    private void init() {
+    // This method should be called once to initialize the database schema
+    public void init() {
         try (Connection conn = DriverManager.getConnection(this.dbUrl);
              Statement stmt = conn.createStatement()) {
             String sql = "CREATE TABLE IF NOT EXISTS users ("
@@ -26,6 +26,7 @@ public class JdbcUserRepository implements UserRepository {
                     + " firstName TEXT NOT NULL,"
                     + " lastName TEXT NOT NULL,"
                     + " email TEXT NOT NULL UNIQUE,"
+                    + " passwordHash TEXT NOT NULL,"
                     + " street TEXT,"
                     + " postalCode TEXT,"
                     + " city TEXT,"
@@ -51,6 +52,7 @@ public class JdbcUserRepository implements UserRepository {
                 user.setFirstName(rs.getString("firstName"));
                 user.setLastName(rs.getString("lastName"));
                 user.setEmail(rs.getString("email"));
+                user.setPasswordHash(rs.getString("passwordHash"));
                 user.setStreet(rs.getString("street"));
                 user.setPostalCode(rs.getString("postalCode"));
                 user.setCity(rs.getString("city"));
@@ -77,6 +79,7 @@ public class JdbcUserRepository implements UserRepository {
                 user.setFirstName(rs.getString("firstName"));
                 user.setLastName(rs.getString("lastName"));
                 user.setEmail(rs.getString("email"));
+                user.setPasswordHash(rs.getString("passwordHash"));
                 user.setStreet(rs.getString("street"));
                 user.setPostalCode(rs.getString("postalCode"));
                 user.setCity(rs.getString("city"));
@@ -99,16 +102,17 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     private User insert(User user) {
-        String sql = "INSERT INTO users(firstName, lastName, email, street, postalCode, city, country) VALUES(?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO users(firstName, lastName, email, passwordHash, street, postalCode, city, country) VALUES(?,?,?,?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(this.dbUrl);
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, user.getFirstName());
             pstmt.setString(2, user.getLastName());
             pstmt.setString(3, user.getEmail());
-            pstmt.setString(4, user.getStreet());
-            pstmt.setString(5, user.getPostalCode());
-            pstmt.setString(6, user.getCity());
-            pstmt.setString(7, user.getCountry());
+            pstmt.setString(4, user.getPasswordHash());
+            pstmt.setString(5, user.getStreet());
+            pstmt.setString(6, user.getPostalCode());
+            pstmt.setString(7, user.getCity());
+            pstmt.setString(8, user.getCountry());
             int affectedRows = pstmt.executeUpdate();
 
             if (affectedRows == 0) {
@@ -134,17 +138,18 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     private User update(User user) {
-        String sql = "UPDATE users SET firstName = ?, lastName = ?, email = ?, street = ?, postalCode = ?, city = ?, country = ? WHERE id = ?";
+        String sql = "UPDATE users SET firstName = ?, lastName = ?, email = ?, passwordHash = ?, street = ?, postalCode = ?, city = ?, country = ? WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(this.dbUrl);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, user.getFirstName());
             pstmt.setString(2, user.getLastName());
             pstmt.setString(3, user.getEmail());
-            pstmt.setString(4, user.getStreet());
-            pstmt.setString(5, user.getPostalCode());
-            pstmt.setString(6, user.getCity());
-            pstmt.setString(7, user.getCountry());
-            pstmt.setLong(8, user.getId());
+            pstmt.setString(4, user.getPasswordHash());
+            pstmt.setString(5, user.getStreet());
+            pstmt.setString(6, user.getPostalCode());
+            pstmt.setString(7, user.getCity());
+            pstmt.setString(8, user.getCountry());
+            pstmt.setLong(9, user.getId());
             pstmt.executeUpdate();
             return user;
         } catch (SQLException e) {
@@ -169,5 +174,32 @@ public class JdbcUserRepository implements UserRepository {
         } catch (SQLException e) {
             throw new DataAccessException("Error deleting user with ID " + id + ": " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        String sql = "SELECT * FROM users WHERE email = ?";
+        try (Connection conn = DriverManager.getConnection(this.dbUrl);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                User user = new User();
+                user.setId(rs.getLong("id"));
+                user.setFirstName(rs.getString("firstName"));
+                user.setLastName(rs.getString("lastName"));
+                user.setEmail(rs.getString("email"));
+                user.setPasswordHash(rs.getString("passwordHash"));
+                user.setStreet(rs.getString("street"));
+                user.setPostalCode(rs.getString("postalCode"));
+                user.setCity(rs.getString("city"));
+                user.setCountry(rs.getString("country"));
+                return Optional.of(user);
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error finding user by email: " + email, e);
+        }
+        return Optional.empty();
     }
 }

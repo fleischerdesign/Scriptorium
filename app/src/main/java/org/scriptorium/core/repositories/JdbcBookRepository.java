@@ -32,15 +32,9 @@ public class JdbcBookRepository implements BookRepository {
         this.dbUrl = dbUrl;
         this.authorRepository = authorRepository;
         this.publisherRepository = publisherRepository;
-        init();
     }
 
-    /**
-     * Initializes the database tables required for books, authors, publishers, and their relationships.
-     * Creates 'books', 'book_authors', and 'book_isbns' tables if they do not already exist.
-     * Throws a DataAccessException if table creation fails.
-     */
-    private void init() {
+    public void init() {
         try (Connection conn = DriverManager.getConnection(dbUrl);
              Statement stmt = conn.createStatement()) {
             // Books table

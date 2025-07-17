@@ -19,6 +19,7 @@ import picocli.CommandLine.HelpCommand;
         BookCommand.class,
         UserCommand.class,
         AuthorCommand.class, // Add AuthorCommand
+        PublisherCommand.class,
         ExitCommand.class,
         HelpCommand.class
     }

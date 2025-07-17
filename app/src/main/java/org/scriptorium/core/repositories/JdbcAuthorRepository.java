@@ -23,14 +23,13 @@ public class JdbcAuthorRepository implements AuthorRepository {
      */
     public JdbcAuthorRepository(String dbUrl) {
         this.dbUrl = dbUrl;
-        init();
     }
 
     /**
      * Initializes the database table for authors. Creates the 'authors' table if it does not already exist.
      * Throws a DataAccessException if the table creation fails.
      */
-    private void init() {
+    public void init() {
         try (Connection conn = DriverManager.getConnection(dbUrl);
              Statement stmt = conn.createStatement()) {
             String sql = "CREATE TABLE IF NOT EXISTS authors (\n"

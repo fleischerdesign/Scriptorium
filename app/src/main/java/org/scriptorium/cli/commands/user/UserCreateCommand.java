@@ -22,6 +22,9 @@ public class UserCreateCommand implements Runnable {
     @Option(names = {"-e", "--email"}, description = "User's email address (must be unique)", required = true)
     private String email;
 
+    @Option(names = {"-w", "--password"}, description = "User's password", required = true, interactive = true, arity = "0..1")
+    private String password;
+
     @Option(names = {"-s", "--street"}, description = "User's street")
     private String street;
 
@@ -44,6 +47,7 @@ public class UserCreateCommand implements Runnable {
         newUser.setFirstName(firstName);
         newUser.setLastName(lastName);
         newUser.setEmail(email);
+        newUser.setPasswordHash(password); // Set the plain-text password, UserService will hash it
         newUser.setStreet(street);
         newUser.setPostalCode(postalCode);
         newUser.setCity(city);

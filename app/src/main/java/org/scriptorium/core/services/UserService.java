@@ -4,6 +4,7 @@ import org.scriptorium.core.domain.User;
 import org.scriptorium.core.repositories.UserRepository;
 import org.scriptorium.core.exceptions.DataAccessException;
 import org.scriptorium.core.exceptions.DuplicateEmailException;
+import org.mindrot.jbcrypt.BCrypt;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +25,14 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    private String hashPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
+    }
+
+    private boolean checkPassword(String candidate, String hashed) {
+        return BCrypt.checkpw(candidate, hashed);
+    }
+
     /**
      * Creates a new user.
      * In a real application, this is where you would add validation
@@ -34,9 +43,10 @@ public class UserService {
      */
     public User createUser(User user) {
         try {
-            // Basic validation: check if email is already in use
-            // In a real application, you might have a findByEmail method in the repository
-            // For now, we rely on the unique constraint in the database
+            // Hash the password before saving
+            if (user.getPasswordHash() != null && !user.getPasswordHash().isEmpty()) {
+                user.setPasswordHash(hashPassword(user.getPasswordHash()));
+            }
             return userRepository.save(user);
         } catch (DuplicateEmailException e) {
             throw new DuplicateEmailException("User with email " + user.getEmail() + " already exists.", e);
@@ -83,6 +93,10 @@ public class UserService {
             throw new IllegalArgumentException("User must have an ID to be updated.");
         }
         try {
+            // Hash the password if it's provided for update
+            if (user.getPasswordHash() != null && !user.getPasswordHash().isEmpty()) {
+                user.setPasswordHash(hashPassword(user.getPasswordHash()));
+            }
             return userRepository.save(user);
         } catch (DuplicateEmailException e) {
             throw new DuplicateEmailException("User with email " + user.getEmail() + " already exists.", e);
@@ -101,6 +115,28 @@ public class UserService {
             userRepository.deleteById(id);
         } catch (DataAccessException e) {
             throw new DataAccessException("Failed to delete user with ID " + id + ": " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Authenticates a user by email and password.
+     *
+     * @param email The email of the user.
+     * @param password The plain-text password provided by the user.
+     * @return An Optional containing the authenticated user if credentials are valid, otherwise empty.
+     */
+    public Optional<User> authenticateUser(String email, String password) {
+        try {
+            Optional<User> userOptional = userRepository.findByEmail(email);
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                if (checkPassword(password, user.getPasswordHash())) {
+                    return Optional.of(user);
+                }
+            }
+            return Optional.empty();
+        } catch (DataAccessException e) {
+            throw new DataAccessException("Authentication failed: " + e.getMessage(), e);
         }
     }
 }

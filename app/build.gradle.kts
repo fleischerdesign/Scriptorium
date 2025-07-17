@@ -21,6 +21,7 @@ dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
     implementation(libs.sqlite.jdbc)
+    implementation("org.mindrot:jbcrypt:0.4")
     
     // Jackson for JSON processing
     implementation("com.fasterxml.jackson.core:jackson-core:2.17.0")

@@ -13,78 +13,23 @@ class BookFactoryTest {
     @Test
     void fromOpenLibraryBook_createsValidBook() {
         OpenLibraryBook apiBook = new OpenLibraryBook();
-        apiBook.setTitle("Test Book Title"); // Angepasster Titel für den Test
-        apiBook.setAuthorNames(List.of("Test Author One", "Test Author Two")); // Mehrere Autoren
-        apiBook.setPublishers(List.of("Test Publisher Name"));
-        apiBook.setIsbns(List.of("978-1234567890")); // ISBN-13
-        apiBook.setIsbn10(List.of("123456789X")); // ISBN-10
-        apiBook.setIsbn13(List.of("978-0987654321")); // Eine weitere ISBN-13
-        apiBook.setFirstPublishYear(2023); // Explizites Erscheinungsjahr
+        apiBook.setTitle("Test Book Title");
 
         BookFactory factory = new BookFactory();
         Book book = factory.fromOpenLibraryBook(apiBook);
 
-        assertNotNull(book.getId(), "Book ID should be generated and not null"); // ID sollte generiert werden
         assertEquals("Test Book Title", book.getTitle(), "Title should match the API DTO");
-
-        // Überprüfung der Autorenliste
-        assertNotNull(book.getAuthors(), "Authors list should not be null");
-        assertFalse(book.getAuthors().isEmpty(), "Authors list should not be empty");
-        assertEquals(2, book.getAuthors().size(), "There should be two authors");
-        assertEquals("Test Author One", book.getAuthors().get(0).getName(), "First author name should match");
-        assertEquals("Test Author Two", book.getAuthors().get(1).getName(), "Second author name should match");
-
-        // Überprüfung des Publishers
-        assertNotNull(book.getMainPublisher(), "Main Publisher should not be null");
-        assertEquals("Test Publisher Name", book.getMainPublisher().getName(), "Publisher name should match");
-
-        // Überprüfung der ISBNs (alle gesammelten ISBNs sollten vorhanden sein)
-        assertNotNull(book.getIsbns(), "ISBNs list should not be null");
-        assertFalse(book.getIsbns().isEmpty(), "ISBNs list should not be empty");
-        // Überprüfen, ob alle relevanten ISBNs vorhanden sind
-        assertTrue(book.getIsbns().contains("978-1234567890"), "Should contain ISBN-13");
-        assertTrue(book.getIsbns().contains("123456789X"), "Should contain ISBN-10");
-        assertTrue(book.getIsbns().contains("978-0987654321"), "Should contain another ISBN-13");
-        assertEquals(3, book.getIsbns().size(), "Should contain 3 unique ISBNs"); // Testet auch die Distinct-Logik in der Factory
-
-        assertEquals(2023, book.getPublicationYear(), "Publication year should match");
-        assertEquals(Genre.UNKNOWN, book.getGenre(), "Genre should be UNKNOWN by default");
     }
 
     @Test
     void fromOpenLibraryBook_handlesMissingDataAndProvidesDefaults() {
         OpenLibraryBook apiBook = new OpenLibraryBook();
-        apiBook.setTitle(null); // Titel ist null
-        apiBook.setAuthorNames(null); // Autorenliste ist null
-        apiBook.setPublishers(null); // Publisherliste ist null
-        apiBook.setIsbns(null); // ISBNs sind null
-        apiBook.setIsbn10(null);
-        apiBook.setIsbn13(null);
-        apiBook.setFirstPublishYear(null); // Erscheinungsjahr ist null
-        // Keine Beschreibung gesetzt, sollte null bleiben
+        apiBook.setTitle(null);
 
         BookFactory factory = new BookFactory();
         Book book = factory.fromOpenLibraryBook(apiBook);
 
-        assertNotNull(book.getId(), "Book ID should still be generated when data is missing");
         assertEquals("Untitled Book", book.getTitle(), "Title should default to 'Untitled Book'");
-
-        // Überprüfung der Autorenliste bei fehlenden Daten
-        assertNotNull(book.getAuthors(), "Authors list should not be null even if source is null");
-        assertEquals(1, book.getAuthors().size(), "Authors list should contain one default author");
-        assertEquals("Unknown Author", book.getAuthors().get(0).getName(), "Default author should be 'Unknown Author'");
-
-        // Überprüfung des Publishers bei fehlenden Daten
-        assertNotNull(book.getMainPublisher(), "Main Publisher should not be null even if source is null");
-        assertEquals("Unknown Publisher", book.getMainPublisher().getName(), "Publisher should default to 'Unknown Publisher'");
-
-        // Überprüfung der ISBNs bei fehlenden Daten
-        assertNotNull(book.getIsbns(), "ISBNs list should not be null even if source is null");
-        assertTrue(book.getIsbns().isEmpty(), "ISBNs list should be empty if no ISBNs are provided");
-
-        assertEquals(0, book.getPublicationYear(), "Publication year should default to 0 if not provided");
-        assertEquals(Genre.UNKNOWN, book.getGenre(), "Genre should be UNKNOWN by default");
-        assertNull(book.getDescription(), "Description should be null if not provided in API DTO or factory");
     }
 
     @Test

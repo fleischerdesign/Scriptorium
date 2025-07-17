@@ -12,6 +12,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
+    private String passwordHash; // Added for password storage
     private String street;
     private String postalCode;
     private String city;
@@ -21,10 +22,11 @@ public class User {
 
     }
 
-    public User(String firstName, String lastName, String email) {
+    public User(String firstName, String lastName, String email, String passwordHash) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.passwordHash = passwordHash;
     }
 
     public Long getId() {
@@ -91,6 +93,14 @@ public class User {
         this.country = country;
     }
 
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -113,6 +123,7 @@ public class User {
                ", firstName='" + firstName + '\'' +
                ", lastName='" + lastName + '\'' +
                ", email='" + email + '\'' +
+               ", passwordHash='" + passwordHash + '\'' +
                ", street='" + street + '\'' +
                ", postalCode='" + postalCode + '\'' +
                ", city='" + city + '\'' +
