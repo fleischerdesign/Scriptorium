@@ -13,6 +13,13 @@ import org.scriptorium.cli.commands.user.UserUpdateCommand;
 import org.scriptorium.core.repositories.JdbcUserRepository;
 import org.scriptorium.core.repositories.UserRepository;
 import org.scriptorium.core.services.UserService;
+import org.scriptorium.core.repositories.AuthorRepository;
+import org.scriptorium.core.repositories.PublisherRepository;
+import org.scriptorium.core.repositories.BookRepository;
+import org.scriptorium.core.repositories.JdbcBookRepository;
+import org.scriptorium.core.repositories.JdbcAuthorRepository;
+import org.scriptorium.core.repositories.JdbcPublisherRepository;
+import org.scriptorium.core.services.BookService;
 import picocli.CommandLine;
 
 import java.util.Scanner;
@@ -33,6 +40,11 @@ public class DependencyFactory implements CommandLine.IFactory {
     private final BookImportService bookImportService = new BookImportService(httpClient, bookFactory);
     private final UserRepository userRepository = new JdbcUserRepository("jdbc:sqlite:scriptorium.db");
     private final UserService userService = new UserService(userRepository);
+
+    private final AuthorRepository authorRepository = new JdbcAuthorRepository("jdbc:sqlite:scriptorium.db");
+    private final PublisherRepository publisherRepository = new JdbcPublisherRepository("jdbc:sqlite:scriptorium.db");
+    private final BookRepository bookRepository = new JdbcBookRepository("jdbc:sqlite:scriptorium.db", authorRepository, publisherRepository);
+    private final BookService bookService = new BookService(bookRepository);
 
     /**
      * Called by Picocli to create an instance of a command class.
@@ -69,6 +81,21 @@ public class DependencyFactory implements CommandLine.IFactory {
         }
         if (cls.isAssignableFrom(BookCommand.class)) {
             return (K) new BookCommand();
+        }
+        if (cls.isAssignableFrom(org.scriptorium.cli.commands.book.BookCreateCommand.class)) {
+            return (K) new org.scriptorium.cli.commands.book.BookCreateCommand(bookService);
+        }
+        if (cls.isAssignableFrom(org.scriptorium.cli.commands.book.BookShowCommand.class)) {
+            return (K) new org.scriptorium.cli.commands.book.BookShowCommand(bookService);
+        }
+        if (cls.isAssignableFrom(org.scriptorium.cli.commands.book.BookListCommand.class)) {
+            return (K) new org.scriptorium.cli.commands.book.BookListCommand(bookService);
+        }
+        if (cls.isAssignableFrom(org.scriptorium.cli.commands.book.BookUpdateCommand.class)) {
+            return (K) new org.scriptorium.cli.commands.book.BookUpdateCommand(bookService);
+        }
+        if (cls.isAssignableFrom(org.scriptorium.cli.commands.book.BookDeleteCommand.class)) {
+            return (K) new org.scriptorium.cli.commands.book.BookDeleteCommand(bookService);
         }
 
         // For commands with no dependencies, or for Picocli's internal classes,

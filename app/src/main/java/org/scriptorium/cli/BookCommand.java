@@ -1,6 +1,10 @@
 package org.scriptorium.cli;
 
+import org.scriptorium.cli.commands.book.BookCreateCommand;
 import org.scriptorium.cli.commands.book.BookImportCommand;
+import org.scriptorium.cli.commands.book.BookListCommand;
+import org.scriptorium.cli.commands.book.BookShowCommand;
+import org.scriptorium.cli.commands.book.BookUpdateCommand;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;
@@ -16,6 +20,11 @@ import picocli.CommandLine.HelpCommand;
     mixinStandardHelpOptions = true,
     subcommands = {
         BookImportCommand.class, // Existing import command now nested under 'book'
+        BookCreateCommand.class, // Command to create a new book
+        BookShowCommand.class, // Command to show a book by ID
+        BookListCommand.class, // Command to list all books
+        BookUpdateCommand.class, // Command to update an existing book
+        org.scriptorium.cli.commands.book.BookDeleteCommand.class, // Command to delete a book by ID
         HelpCommand.class // Picocli's built-in help command for subcommands
     }
 )

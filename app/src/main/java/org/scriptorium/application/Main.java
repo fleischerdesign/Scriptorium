@@ -47,7 +47,7 @@ public class Main {
                 String line;
                 try {
                     line = lineReader.readLine(prompt);
-                    String[] arguments = line.trim().split("\\s+");
+                    String[] arguments = lineReader.getParsedLine().words().toArray(new String[0]);
                     if (arguments.length == 1 && arguments[0].equalsIgnoreCase("exit")) {
                         break;
                     }
