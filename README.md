@@ -1,4 +1,4 @@
-# Scriptorium CLI - A Console Library System
+# Scriptorium - A Library System
 
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Gradle](https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white)
