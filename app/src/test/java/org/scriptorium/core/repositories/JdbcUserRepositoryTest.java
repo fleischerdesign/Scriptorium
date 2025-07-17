@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
+import java.io.File;
 
 import org.scriptorium.core.exceptions.DuplicateEmailException;
 
@@ -19,11 +20,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JdbcUserRepositoryTest {
 
-    private static final String TEST_DB_URL = "jdbc:sqlite:file::memory:testdb?cache=shared"; // In-memory database for testing
+    private static final String TEST_DB_URL = "jdbc:sqlite:test.db"; // File-based database for testing
     private JdbcUserRepository userRepository;
 
     @BeforeEach
     void setUp() throws SQLException {
+        // Ensure the database file is deleted before each test
+        new File("test.db").delete();
+
         try (Connection conn = DriverManager.getConnection(TEST_DB_URL);
              Statement stmt = conn.createStatement()) {
             stmt.execute("DROP TABLE IF EXISTS users;");
@@ -41,16 +45,12 @@ public class JdbcUserRepositoryTest {
             stmt.execute(sql);
         }
         userRepository = new JdbcUserRepository(TEST_DB_URL);
-        userRepository.init();
     }
 
     @AfterEach
     void tearDown() throws SQLException {
-        // Clean up after each test
-        try (Connection conn = DriverManager.getConnection(TEST_DB_URL);
-             Statement stmt = conn.createStatement()) {
-            stmt.execute("DROP TABLE IF EXISTS users;");
-        }
+        // Clean up after each test by deleting the database file
+        new File("test.db").delete();
     }
 
     @Test
