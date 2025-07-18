@@ -44,9 +44,8 @@ public class Main {
             System.out.println("Welcome to Scriptorium! Type 'help' for commands, 'exit' to quit.");
 
             while (true) {
-                String line;
                 try {
-                    line = lineReader.readLine(prompt);
+                    lineReader.readLine(prompt);
                     String[] arguments = lineReader.getParsedLine().words().toArray(new String[0]);
                     if (arguments.length == 1 && arguments[0].equalsIgnoreCase("exit")) {
                         break;
