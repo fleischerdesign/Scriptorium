@@ -18,7 +18,7 @@ import picocli.CommandLine.HelpCommand;
         BookShowCommand.class, // Command to show a book by ID
         BookListCommand.class, // Command to list all books
         BookUpdateCommand.class, // Command to update an existing book
-        org.scriptorium.cli.commands.book.BookDeleteCommand.class, // Command to delete a book by ID
+        BookDeleteCommand.class, // Command to delete a book by ID
         HelpCommand.class // Picocli's built-in help command for subcommands
     }
 )
