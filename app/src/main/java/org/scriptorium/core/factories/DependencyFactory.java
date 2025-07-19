@@ -19,6 +19,13 @@ import org.scriptorium.cli.commands.genre.GenreDeleteCommand;
 import org.scriptorium.cli.commands.genre.GenreListCommand;
 import org.scriptorium.cli.commands.genre.GenreShowCommand;
 import org.scriptorium.cli.commands.genre.GenreUpdateCommand;
+import org.scriptorium.cli.commands.loan.LoanCommand;
+import org.scriptorium.cli.commands.loan.LoanCreateCommand;
+import org.scriptorium.cli.commands.loan.LoanDeleteCommand;
+import org.scriptorium.cli.commands.loan.LoanListCommand;
+import org.scriptorium.cli.commands.loan.LoanReturnCommand;
+import org.scriptorium.cli.commands.loan.LoanShowCommand;
+import org.scriptorium.cli.commands.loan.LoanUpdateCommand;
 import org.scriptorium.cli.commands.publisher.PublisherCreateCommand;
 import org.scriptorium.cli.commands.publisher.PublisherDeleteCommand;
 import org.scriptorium.cli.commands.publisher.PublisherListCommand;
@@ -43,8 +50,11 @@ import org.scriptorium.core.repositories.BookRepository;
 import org.scriptorium.core.repositories.JdbcBookRepository;
 import org.scriptorium.core.repositories.JdbcAuthorRepository;
 import org.scriptorium.core.repositories.JdbcPublisherRepository;
+import org.scriptorium.core.repositories.JdbcLoanRepository;
+import org.scriptorium.core.repositories.LoanRepository;
 import org.scriptorium.core.services.BookService;
 import org.scriptorium.core.services.PublisherService;
+import org.scriptorium.core.services.LoanService;
 
 import picocli.CommandLine;
 
@@ -74,6 +84,8 @@ public class DependencyFactory implements CommandLine.IFactory {
     private final BookService bookService;
     private final GenreRepository genreRepository;
     private final GenreService genreService;
+    private final LoanRepository loanRepository; // New
+    private final LoanService loanService;     // New
 
     public DependencyFactory() {
         this.userRepository = new JdbcUserRepository("jdbc:sqlite:scriptorium.db");
@@ -95,6 +107,10 @@ public class DependencyFactory implements CommandLine.IFactory {
         this.bookRepository = new JdbcBookRepository("jdbc:sqlite:scriptorium.db", authorRepository, publisherRepository, genreRepository);
         ((JdbcBookRepository) this.bookRepository).init(); // Explicitly call init
         this.bookService = new BookService(bookRepository);
+
+        this.loanRepository = new JdbcLoanRepository("jdbc:sqlite:scriptorium.db", bookRepository, userRepository); // Initialize LoanRepository
+        ((JdbcLoanRepository) this.loanRepository).init(); // Explicitly call init
+        this.loanService = new LoanService(loanRepository, bookRepository, userRepository); // Initialize LoanService
 
         this.bookFactory = new BookFactory(genreService);
         this.bookImportService = new BookImportService(httpClient, bookFactory, genreService);
@@ -196,6 +212,27 @@ public class DependencyFactory implements CommandLine.IFactory {
         }
         if (cls.isAssignableFrom(GenreUpdateCommand.class)) {
             return (K) new GenreUpdateCommand(genreService);
+        }
+        if (cls.isAssignableFrom(LoanCommand.class)) {
+            return (K) new LoanCommand();
+        }
+        if (cls.isAssignableFrom(LoanCreateCommand.class)) {
+            return (K) new LoanCreateCommand(loanService, bookService, userService);
+        }
+        if (cls.isAssignableFrom(LoanShowCommand.class)) {
+            return (K) new LoanShowCommand(loanService);
+        }
+        if (cls.isAssignableFrom(LoanListCommand.class)) {
+            return (K) new LoanListCommand(loanService);
+        }
+        if (cls.isAssignableFrom(LoanUpdateCommand.class)) {
+            return (K) new LoanUpdateCommand(loanService);
+        }
+        if (cls.isAssignableFrom(LoanDeleteCommand.class)) {
+            return (K) new LoanDeleteCommand(loanService);
+        }
+        if (cls.isAssignableFrom(LoanReturnCommand.class)) {
+            return (K) new LoanReturnCommand(loanService);
         }
 
         // For commands with no dependencies, or for Picocli's internal classes,

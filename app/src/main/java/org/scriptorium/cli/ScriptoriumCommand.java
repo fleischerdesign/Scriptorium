@@ -4,6 +4,7 @@ import org.scriptorium.cli.commands.ExitCommand;
 import org.scriptorium.cli.commands.author.AuthorCommand;
 import org.scriptorium.cli.commands.book.BookCommand;
 import org.scriptorium.cli.commands.genre.GenreCommand;
+import org.scriptorium.cli.commands.loan.LoanCommand;
 import org.scriptorium.cli.commands.publisher.PublisherCommand;
 import org.scriptorium.cli.commands.user.UserCommand;
 import picocli.CommandLine.Command;
@@ -22,6 +23,7 @@ import picocli.CommandLine.HelpCommand;
         PublisherCommand.class,
         GenreCommand.class,
         ExitCommand.class,
+        LoanCommand.class,
         HelpCommand.class
 })
 public class ScriptoriumCommand {

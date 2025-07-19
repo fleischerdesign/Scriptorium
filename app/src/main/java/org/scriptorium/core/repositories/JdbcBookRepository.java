@@ -2,11 +2,8 @@ package org.scriptorium.core.repositories;
 
 import org.scriptorium.core.domain.Author;
 import org.scriptorium.core.domain.Book;
-import org.scriptorium.core.domain.Genre;
 import org.scriptorium.core.domain.Publisher;
 import org.scriptorium.core.exceptions.DataAccessException;
-import org.scriptorium.core.repositories.GenreRepository;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

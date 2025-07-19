@@ -23,7 +23,6 @@ public class BookImportCommand implements Runnable {
 
     private final BookImportService bookImportService;
     private final Scanner scanner;
-    private final GenreService genreService;
 
     /**
      * Optional command-line parameter for the book title.
@@ -42,7 +41,6 @@ public class BookImportCommand implements Runnable {
     public BookImportCommand(BookImportService bookImportService, Scanner scanner, GenreService genreService) {
         this.bookImportService = bookImportService;
         this.scanner = scanner;
-        this.genreService = genreService;
     }
 
     /**
