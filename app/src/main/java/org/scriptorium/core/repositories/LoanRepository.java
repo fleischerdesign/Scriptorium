@@ -44,12 +44,12 @@ public interface LoanRepository {
     List<Loan> findByUserId(Long userId);
 
     /**
-     * Finds all loans associated with a specific book ID.
+     * Finds all loans associated with a specific copy ID.
      *
-     * @param bookId The ID of the book.
-     * @return A list of loans for the given book.
+     * @param copyId The ID of the copy.
+     * @return A list of loans for the given copy.
      */
-    List<Loan> findByBookId(Long bookId);
+    List<Loan> findByCopyId(Long copyId);
 
     /**
      * Deletes a loan by its ID.

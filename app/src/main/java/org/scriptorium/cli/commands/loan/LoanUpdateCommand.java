@@ -98,7 +98,7 @@ public class LoanUpdateCommand implements Callable<Integer> {
 
             System.out.println("Loan updated successfully:");
             System.out.println("ID: " + updatedLoan.getId());
-            System.out.println("Book: " + (updatedLoan.getBook() != null ? updatedLoan.getBook().getTitle() + " (ID: " + updatedLoan.getBook().getId() + ")" : "N/A"));
+            System.out.println("Copy: " + (updatedLoan.getCopy() != null ? updatedLoan.getCopy().getBarcode() + " (ID: " + updatedLoan.getCopy().getId() + ")" : "N/A"));
             System.out.println("User: " + (updatedLoan.getUser() != null ? updatedLoan.getUser().getFirstName() + " " + updatedLoan.getUser().getLastName() + " (ID: " + updatedLoan.getUser().getId() + ")" : "N/A"));
             System.out.println("Loan Date: " + updatedLoan.getLoanDate());
             System.out.println("Due Date: " + updatedLoan.getDueDate());

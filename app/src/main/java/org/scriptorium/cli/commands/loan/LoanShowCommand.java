@@ -52,7 +52,7 @@ public class LoanShowCommand implements Callable<Integer> {
                 Loan loan = loanOptional.get();
                 System.out.println("Loan Details:");
                 System.out.println("ID: " + loan.getId());
-                System.out.println("Book: " + (loan.getBook() != null ? loan.getBook().getTitle() + " (ID: " + loan.getBook().getId() + ")" : "N/A"));
+                System.out.println("Copy: " + (loan.getCopy() != null ? loan.getCopy().getBarcode() + " (ID: " + loan.getCopy().getId() + ")" : "N/A"));
                 System.out.println("User: " + (loan.getUser() != null ? loan.getUser().getFirstName() + " " + loan.getUser().getLastName() + " (ID: " + loan.getUser().getId() + ")" : "N/A"));
                 System.out.println("Loan Date: " + loan.getLoanDate());
                 System.out.println("Due Date: " + loan.getDueDate());

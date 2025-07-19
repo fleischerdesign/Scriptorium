@@ -38,8 +38,8 @@ public class LoanListCommand implements Callable<Integer> {
     @Option(names = {"-u", "--user-id"}, description = "Filter loans by user ID")
     private Long userId;
 
-    @Option(names = {"-b", "--book-id"}, description = "Filter loans by book ID")
-    private Long bookId;
+    @Option(names = {"-c", "--copy-id"}, description = "Filter loans by copy ID")
+    private Long copyId;
 
     /**
      * Executes the loan list command.
@@ -51,13 +51,13 @@ public class LoanListCommand implements Callable<Integer> {
         try {
             List<Loan> loans;
 
-            if (userId != null && bookId != null) {
-                System.err.println("Error: Cannot provide both --user-id and --book-id. Please choose one.");
+            if (userId != null && copyId != null) {
+                System.err.println("Error: Cannot provide both --user-id and --copy-id. Please choose one.");
                 return 1;
             } else if (userId != null) {
                 loans = loanService.findLoansByUserId(userId);
-            } else if (bookId != null) {
-                loans = loanService.findLoansByBookId(bookId);
+            } else if (copyId != null) {
+                loans = loanService.findLoansByCopyId(copyId);
             } else {
                 loans = loanService.findAllLoans();
             }
@@ -66,15 +66,15 @@ public class LoanListCommand implements Callable<Integer> {
                 System.out.println("No loans found.");
             } else {
                 System.out.println("Listing loans:");
-                System.out.printf("%-5s %-20s %-20s %-12s %-12s %-15s%n", "ID", "Book Title", "User Name", "Loan Date", "Due Date", "Return Date");
+                System.out.printf("%-5s %-20s %-20s %-12s %-12s %-15s%n", "ID", "Copy Barcode", "User Name", "Loan Date", "Due Date", "Return Date");
                 System.out.println("-----------------------------------------------------------------------------------------");
                 for (Loan loan : loans) {
-                    String bookTitle = (loan.getBook() != null) ? loan.getBook().getTitle() : "N/A";
+                    String copyBarcode = (loan.getCopy() != null) ? loan.getCopy().getBarcode() : "N/A";
                     String userName = (loan.getUser() != null) ? loan.getUser().getFirstName() + " " + loan.getUser().getLastName() : "N/A";
                     String returnDate = (loan.getReturnDate() != null) ? loan.getReturnDate().toString() : "Not returned";
                     System.out.printf("%-5d %-20s %-20s %-12s %-12s %-15s%n",
                         loan.getId(),
-                        bookTitle,
+                        copyBarcode,
                         userName,
                         loan.getLoanDate(),
                         loan.getDueDate(),

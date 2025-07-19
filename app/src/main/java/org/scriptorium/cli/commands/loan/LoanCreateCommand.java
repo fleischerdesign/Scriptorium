@@ -4,6 +4,7 @@ import org.scriptorium.core.domain.Loan;
 import org.scriptorium.core.services.BookService;
 import org.scriptorium.core.services.LoanService;
 import org.scriptorium.core.services.UserService;
+import org.scriptorium.core.services.CopyService; // New
 import org.scriptorium.core.exceptions.DataAccessException;
 
 import picocli.CommandLine.Command;
@@ -28,7 +29,7 @@ public class LoanCreateCommand implements Callable<Integer> {
     LoanCommand parent; // Injects the parent command (LoanCommand)
 
     private final LoanService loanService;
-    private final BookService bookService;
+    private final CopyService copyService;
     private final UserService userService;
 
     /**
@@ -37,14 +38,14 @@ public class LoanCreateCommand implements Callable<Integer> {
      * @param bookService The service responsible for book operations.
      * @param userService The service responsible for user operations.
      */
-    public LoanCreateCommand(LoanService loanService, BookService bookService, UserService userService) {
+    public LoanCreateCommand(LoanService loanService, CopyService copyService, UserService userService) {
         this.loanService = loanService;
-        this.bookService = bookService;
+        this.copyService = copyService;
         this.userService = userService;
     }
 
-    @Option(names = {"-b", "--book-id"}, description = "ID of the book to loan", required = true)
-    private Long bookId;
+    @Option(names = {"-c", "--copy-id"}, description = "ID of the copy to loan", required = true)
+    private Long copyId;
 
     @Option(names = {"-u", "--user-id"}, description = "ID of the user borrowing the book", required = true)
     private Long userId;
@@ -70,16 +71,16 @@ public class LoanCreateCommand implements Callable<Integer> {
         try {
             // Optional: Verify book and user existence before creating loan
             // This is already handled by LoanService, but can add more specific messages here if needed
-            bookService.findBookById(bookId)
-                    .orElseThrow(() -> new IllegalArgumentException("Book with ID " + bookId + " not found."));
+            copyService.findCopyById(copyId)
+                    .orElseThrow(() -> new IllegalArgumentException("Copy with ID " + copyId + " not found."));
             userService.findUserById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("User with ID " + userId + " not found."));
 
-            Loan newLoan = loanService.createLoan(bookId, userId, dueDate);
+            Loan newLoan = loanService.createLoan(copyId, userId, dueDate);
 
             System.out.println("Loan created successfully:");
             System.out.println("ID: " + newLoan.getId());
-            System.out.println("Book ID: " + newLoan.getBook().getId());
+            System.out.println("Copy ID: " + newLoan.getCopy().getId());
             System.out.println("User ID: " + newLoan.getUser().getId());
             System.out.println("Loan Date: " + newLoan.getLoanDate());
             System.out.println("Due Date: " + newLoan.getDueDate());

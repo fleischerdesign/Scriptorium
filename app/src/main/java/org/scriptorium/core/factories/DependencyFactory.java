@@ -32,6 +32,12 @@ import org.scriptorium.cli.commands.reservation.ReservationFulfillCommand;
 import org.scriptorium.cli.commands.reservation.ReservationListCommand;
 import org.scriptorium.cli.commands.reservation.ReservationShowCommand;
 import org.scriptorium.cli.commands.reservation.ReservationDeleteCommand;
+import org.scriptorium.cli.commands.copy.CopyCommand;
+import org.scriptorium.cli.commands.copy.CopyCreateCommand;
+import org.scriptorium.cli.commands.copy.CopyListCommand;
+import org.scriptorium.cli.commands.copy.CopyShowCommand;
+import org.scriptorium.cli.commands.copy.CopyUpdateCommand;
+import org.scriptorium.cli.commands.copy.CopyDeleteCommand;
 import org.scriptorium.cli.commands.loan.LoanUpdateCommand;
 import org.scriptorium.cli.commands.publisher.PublisherCreateCommand;
 import org.scriptorium.cli.commands.publisher.PublisherDeleteCommand;
@@ -59,12 +65,15 @@ import org.scriptorium.core.repositories.JdbcAuthorRepository;
 import org.scriptorium.core.repositories.JdbcPublisherRepository;
 import org.scriptorium.core.repositories.JdbcLoanRepository;
 import org.scriptorium.core.repositories.LoanRepository;
-import org.scriptorium.core.repositories.ReservationRepository; // New
-import org.scriptorium.core.repositories.JdbcReservationRepository; // New
+import org.scriptorium.core.repositories.ReservationRepository;
+import org.scriptorium.core.repositories.JdbcReservationRepository;
+import org.scriptorium.core.repositories.CopyRepository; // New
+import org.scriptorium.core.repositories.JdbcCopyRepository; // New
 import org.scriptorium.core.services.BookService;
 import org.scriptorium.core.services.PublisherService;
 import org.scriptorium.core.services.LoanService;
-import org.scriptorium.core.services.ReservationService; // New
+import org.scriptorium.core.services.ReservationService;
+import org.scriptorium.core.services.CopyService; // New
 
 import picocli.CommandLine;
 
@@ -96,8 +105,10 @@ public class DependencyFactory implements CommandLine.IFactory {
     private final GenreService genreService;
     private final LoanRepository loanRepository;
     private final LoanService loanService;
-    private final ReservationRepository reservationRepository; // New
-    private final ReservationService reservationService;     // New
+    private final ReservationRepository reservationRepository;
+    private final ReservationService reservationService;
+    private final CopyRepository copyRepository; // New
+    private final CopyService copyService;     // New
 
     public DependencyFactory() {
         this.userRepository = new JdbcUserRepository("jdbc:sqlite:scriptorium.db");
@@ -120,13 +131,17 @@ public class DependencyFactory implements CommandLine.IFactory {
         ((JdbcBookRepository) this.bookRepository).init(); // Explicitly call init
         this.bookService = new BookService(bookRepository);
 
-        this.loanRepository = new JdbcLoanRepository("jdbc:sqlite:scriptorium.db", bookRepository, userRepository);
-        ((JdbcLoanRepository) this.loanRepository).init(); // Explicitly call init
-        this.loanService = new LoanService(loanRepository, bookRepository, userRepository);
+        this.copyRepository = new JdbcCopyRepository("jdbc:sqlite:scriptorium.db", bookRepository); // Initialize CopyRepository
+        ((JdbcCopyRepository) this.copyRepository).init(); // Explicitly call init
+        this.copyService = new CopyService(copyRepository, bookRepository); // Initialize CopyService
 
-        this.reservationRepository = new JdbcReservationRepository("jdbc:sqlite:scriptorium.db", bookRepository, userRepository); // Initialize ReservationRepository
+        this.loanRepository = new JdbcLoanRepository("jdbc:sqlite:scriptorium.db", copyRepository, userRepository);
+        ((JdbcLoanRepository) this.loanRepository).init(); // Explicitly call init
+        this.loanService = new LoanService(loanRepository, copyRepository, userRepository);
+
+        this.reservationRepository = new JdbcReservationRepository("jdbc:sqlite:scriptorium.db", bookRepository, userRepository);
         ((JdbcReservationRepository) this.reservationRepository).init(); // Explicitly call init
-        this.reservationService = new ReservationService(reservationRepository, bookRepository, userRepository); // Initialize ReservationService
+        this.reservationService = new ReservationService(reservationRepository, bookRepository, userRepository);
 
         this.bookFactory = new BookFactory(genreService);
         this.bookImportService = new BookImportService(httpClient, bookFactory, genreService);
@@ -233,7 +248,7 @@ public class DependencyFactory implements CommandLine.IFactory {
             return (K) new LoanCommand();
         }
         if (cls.isAssignableFrom(LoanCreateCommand.class)) {
-            return (K) new LoanCreateCommand(loanService, bookService, userService);
+            return (K) new LoanCreateCommand(loanService, copyService, userService);
         }
         if (cls.isAssignableFrom(LoanShowCommand.class)) {
             return (K) new LoanShowCommand(loanService);
@@ -270,6 +285,24 @@ public class DependencyFactory implements CommandLine.IFactory {
         }
         if (cls.isAssignableFrom(ReservationDeleteCommand.class)) {
             return (K) new ReservationDeleteCommand(reservationService);
+        }
+        if (cls.isAssignableFrom(CopyCommand.class)) {
+            return (K) new CopyCommand();
+        }
+        if (cls.isAssignableFrom(CopyCreateCommand.class)) {
+            return (K) new CopyCreateCommand(copyService, bookService);
+        }
+        if (cls.isAssignableFrom(CopyListCommand.class)) {
+            return (K) new CopyListCommand(copyService);
+        }
+        if (cls.isAssignableFrom(CopyShowCommand.class)) {
+            return (K) new CopyShowCommand(copyService, bookService);
+        }
+        if (cls.isAssignableFrom(CopyUpdateCommand.class)) {
+            return (K) new CopyUpdateCommand(copyService);
+        }
+        if (cls.isAssignableFrom(CopyDeleteCommand.class)) {
+            return (K) new CopyDeleteCommand(copyService);
         }
 
         // For commands with no dependencies, or for Picocli's internal classes,

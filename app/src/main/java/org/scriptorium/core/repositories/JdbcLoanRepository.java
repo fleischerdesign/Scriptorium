@@ -1,6 +1,6 @@
 package org.scriptorium.core.repositories;
 
-import org.scriptorium.core.domain.Book;
+import org.scriptorium.core.domain.Copy;
 import org.scriptorium.core.domain.Loan;
 import org.scriptorium.core.domain.User;
 import org.scriptorium.core.exceptions.DataAccessException;
@@ -18,18 +18,18 @@ import java.util.Optional;
 public class JdbcLoanRepository implements LoanRepository {
 
     private final String dbUrl;
-    private final BookRepository bookRepository;
+    private final CopyRepository copyRepository;
     private final UserRepository userRepository;
 
     /**
      * Constructs a new JdbcLoanRepository with the specified database URL and dependent repositories.
      * @param dbUrl The JDBC URL for the SQLite database.
-     * @param bookRepository The repository for Book entities.
+     * @param copyRepository The repository for Copy entities.
      * @param userRepository The repository for User entities.
      */
-    public JdbcLoanRepository(String dbUrl, BookRepository bookRepository, UserRepository userRepository) {
+    public JdbcLoanRepository(String dbUrl, CopyRepository copyRepository, UserRepository userRepository) {
         this.dbUrl = dbUrl;
-        this.bookRepository = bookRepository;
+        this.copyRepository = copyRepository;
         this.userRepository = userRepository;
     }
 
@@ -42,12 +42,12 @@ public class JdbcLoanRepository implements LoanRepository {
              Statement stmt = conn.createStatement()) {
             String sql = "CREATE TABLE IF NOT EXISTS loans ("
                     + " id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                    + " book_id INTEGER NOT NULL,"
+                    + " copy_id INTEGER NOT NULL,"
                     + " user_id INTEGER NOT NULL,"
                     + " loanDate TEXT NOT NULL," // Stored as YYYY-MM-DD
                     + " dueDate TEXT NOT NULL,"  // Stored as YYYY-MM-DD
                     + " returnDate TEXT," // Stored as YYYY-MM-DD, can be NULL
-                    + " FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,"
+                    + " FOREIGN KEY (copy_id) REFERENCES copies(id) ON DELETE CASCADE,"
                     + " FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
                     + ");";
             stmt.execute(sql);
@@ -58,7 +58,7 @@ public class JdbcLoanRepository implements LoanRepository {
 
     @Override
     public Optional<Loan> findById(Long id) {
-        String sql = "SELECT id, book_id, user_id, loanDate, dueDate, returnDate FROM loans WHERE id = ?";
+        String sql = "SELECT id, copy_id, user_id, loanDate, dueDate, returnDate FROM loans WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(dbUrl);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, id);
@@ -75,7 +75,7 @@ public class JdbcLoanRepository implements LoanRepository {
 
     @Override
     public List<Loan> findAll() {
-        String sql = "SELECT id, book_id, user_id, loanDate, dueDate, returnDate FROM loans";
+        String sql = "SELECT id, copy_id, user_id, loanDate, dueDate, returnDate FROM loans";
         List<Loan> loans = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(dbUrl);
              Statement stmt = conn.createStatement();
@@ -100,18 +100,18 @@ public class JdbcLoanRepository implements LoanRepository {
     }
 
     private Loan insert(Loan loan) {
-        String sql = "INSERT INTO loans(book_id, user_id, loanDate, dueDate, returnDate) VALUES(?,?,?,?,?)";
+        String sql = "INSERT INTO loans(copy_id, user_id, loanDate, dueDate, returnDate) VALUES(?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(dbUrl);
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            if (loan.getBook() == null || loan.getBook().getId() == null) {
-                throw new IllegalArgumentException("Book must not be null and must have an ID for loan insertion.");
+            if (loan.getCopy() == null || loan.getCopy().getId() == null) {
+                throw new IllegalArgumentException("Copy must not be null and must have an ID for loan insertion.");
             }
             if (loan.getUser() == null || loan.getUser().getId() == null) {
                 throw new IllegalArgumentException("User must not be null and must have an ID for loan insertion.");
             }
 
-            pstmt.setLong(1, loan.getBook().getId());
+            pstmt.setLong(1, loan.getCopy().getId());
             pstmt.setLong(2, loan.getUser().getId());
             pstmt.setString(3, loan.getLoanDate().toString());
             pstmt.setString(4, loan.getDueDate().toString());
@@ -137,12 +137,12 @@ public class JdbcLoanRepository implements LoanRepository {
     }
 
     private Loan update(Loan loan) {
-        String sql = "UPDATE loans SET book_id = ?, user_id = ?, loanDate = ?, dueDate = ?, returnDate = ? WHERE id = ?";
+        String sql = "UPDATE loans SET copy_id = ?, user_id = ?, loanDate = ?, dueDate = ?, returnDate = ? WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(dbUrl);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            if (loan.getBook() == null || loan.getBook().getId() == null) {
-                throw new IllegalArgumentException("Book must not be null and must have an ID for loan update.");
+            if (loan.getCopy() == null || loan.getCopy().getId() == null) {
+                throw new IllegalArgumentException("Copy must not be null and must have an ID for loan update.");
             }
             if (loan.getUser() == null || loan.getUser().getId() == null) {
                 throw new IllegalArgumentException("User must not be null and must have an ID for loan update.");
@@ -151,7 +151,7 @@ public class JdbcLoanRepository implements LoanRepository {
                 throw new IllegalArgumentException("Loan ID must not be null for update operation.");
             }
 
-            pstmt.setLong(1, loan.getBook().getId());
+            pstmt.setLong(1, loan.getCopy().getId());
             pstmt.setLong(2, loan.getUser().getId());
             pstmt.setString(3, loan.getLoanDate().toString());
             pstmt.setString(4, loan.getDueDate().toString());
@@ -166,7 +166,7 @@ public class JdbcLoanRepository implements LoanRepository {
 
     @Override
     public List<Loan> findByUserId(Long userId) {
-        String sql = "SELECT id, book_id, user_id, loanDate, dueDate, returnDate FROM loans WHERE user_id = ?";
+        String sql = "SELECT id, copy_id, user_id, loanDate, dueDate, returnDate FROM loans WHERE user_id = ?";
         List<Loan> loans = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(dbUrl);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -183,19 +183,19 @@ public class JdbcLoanRepository implements LoanRepository {
     }
 
     @Override
-    public List<Loan> findByBookId(Long bookId) {
-        String sql = "SELECT id, book_id, user_id, loanDate, dueDate, returnDate FROM loans WHERE book_id = ?";
+    public List<Loan> findByCopyId(Long copyId) {
+        String sql = "SELECT id, copy_id, user_id, loanDate, dueDate, returnDate FROM loans WHERE copy_id = ?";
         List<Loan> loans = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(dbUrl);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, bookId);
+            pstmt.setLong(1, copyId);
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
                 loans.add(mapRowToLoan(rs));
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error finding loans by book ID " + bookId + ": " + e.getMessage(), e);
+            throw new DataAccessException("Error finding loans by copy ID " + copyId + ": " + e.getMessage(), e);
         }
         return loans;
     }
@@ -214,26 +214,26 @@ public class JdbcLoanRepository implements LoanRepository {
 
     /**
      * Helper method to map a ResultSet row to a Loan object.
-     * This method fetches associated Book and User objects using their respective repositories.
+     * This method fetches associated Copy and User objects using their respective repositories.
      * @param rs The ResultSet containing loan data.
      * @return A fully populated Loan object.
      * @throws SQLException if a database access error occurs.
      */
     private Loan mapRowToLoan(ResultSet rs) throws SQLException {
         Long id = rs.getLong("id");
-        Long bookId = rs.getLong("book_id");
+        Long copyId = rs.getLong("copy_id");
         Long userId = rs.getLong("user_id");
         LocalDate loanDate = LocalDate.parse(rs.getString("loanDate"));
         LocalDate dueDate = LocalDate.parse(rs.getString("dueDate"));
         String returnDateStr = rs.getString("returnDate");
         LocalDate returnDate = (returnDateStr != null) ? LocalDate.parse(returnDateStr) : null;
 
-        // Fetch associated Book and User objects using their repositories
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new DataAccessException("Associated book with ID " + bookId + " not found for loan " + id));
+        // Fetch associated Copy and User objects using their repositories
+        Copy copy = copyRepository.findById(copyId)
+                .orElseThrow(() -> new DataAccessException("Associated copy with ID " + copyId + " not found for loan " + id));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new DataAccessException("Associated user with ID " + userId + " not found for loan " + id));
 
-        return new Loan(id, book, user, loanDate, dueDate, returnDate);
+        return new Loan(id, copy, user, loanDate, dueDate, returnDate);
     }
 }
