@@ -12,14 +12,13 @@ public class UserCreateCommand implements Runnable {
 
     private final UserService userService;
 
-    @Option(names = {"-f", "--firstName"}, description = "User's first name", required = true)
+    @Option(names = {"-f", "--firstName"}, description = "User's first name", required = true, interactive = true, echo = true)
     private String firstName;
 
-    @Option(names = {"-l", "--lastName"}, description = "User's last name", required = true)
-
+    @Option(names = {"-l", "--lastName"}, description = "User's last name", required = true, interactive = true, echo = true)
     private String lastName;
 
-    @Option(names = {"-e", "--email"}, description = "User's email address (must be unique)", required = true)
+    @Option(names = {"-e", "--email"}, description = "User's email address (must be unique)", required = true, interactive = true, echo = true)
     private String email;
 
     @Option(names = {"-w", "--password"}, description = "User's password", required = true, interactive = true, arity = "0..1")
