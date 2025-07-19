@@ -2,7 +2,6 @@ package org.scriptorium.cli.commands.publisher;
 
 import java.util.concurrent.Callable;
 
-import org.scriptorium.cli.PublisherCommand;
 import org.scriptorium.core.domain.Publisher;
 import org.scriptorium.core.exceptions.DataAccessException;
 import org.scriptorium.core.exceptions.DuplicateEmailException;

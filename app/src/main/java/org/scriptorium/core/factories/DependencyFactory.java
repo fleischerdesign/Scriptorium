@@ -1,10 +1,12 @@
 package org.scriptorium.core.factories;
 
+import org.scriptorium.cli.commands.author.AuthorCommand;
 import org.scriptorium.cli.commands.author.AuthorCreateCommand;
 import org.scriptorium.cli.commands.author.AuthorDeleteCommand;
 import org.scriptorium.cli.commands.author.AuthorListCommand;
 import org.scriptorium.cli.commands.author.AuthorShowCommand;
 import org.scriptorium.cli.commands.author.AuthorUpdateCommand;
+import org.scriptorium.cli.commands.book.BookCommand;
 import org.scriptorium.cli.commands.book.BookCreateCommand;
 import org.scriptorium.cli.commands.book.BookDeleteCommand;
 import org.scriptorium.cli.commands.book.BookImportCommand;
@@ -17,10 +19,8 @@ import org.scriptorium.cli.commands.publisher.PublisherListCommand;
 import org.scriptorium.core.http.SimpleHttpClient;
 import org.scriptorium.core.services.AuthorService;
 import org.scriptorium.core.services.BookImportService;
-import org.scriptorium.cli.AuthorCommand;
-import org.scriptorium.cli.BookCommand;
-import org.scriptorium.cli.UserCommand;
 import org.scriptorium.cli.commands.user.UserListCommand;
+import org.scriptorium.cli.commands.user.UserCommand;
 import org.scriptorium.cli.commands.user.UserCreateCommand;
 import org.scriptorium.cli.commands.user.UserShowCommand;
 import org.scriptorium.cli.commands.user.UserDeleteCommand;

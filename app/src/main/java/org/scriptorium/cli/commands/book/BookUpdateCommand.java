@@ -1,7 +1,6 @@
 package org.scriptorium.cli.commands.book;
 
 import org.scriptorium.core.domain.Book;
-import org.scriptorium.cli.BookCommand;
 import org.scriptorium.core.domain.Author;
 import org.scriptorium.core.domain.Publisher;
 import org.scriptorium.core.domain.Genre; // Import Genre

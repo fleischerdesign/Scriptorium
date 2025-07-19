@@ -1,10 +1,4 @@
-package org.scriptorium.cli;
-
-import org.scriptorium.cli.commands.author.AuthorCreateCommand;
-import org.scriptorium.cli.commands.author.AuthorDeleteCommand;
-import org.scriptorium.cli.commands.author.AuthorListCommand;
-import org.scriptorium.cli.commands.author.AuthorShowCommand;
-import org.scriptorium.cli.commands.author.AuthorUpdateCommand;
+package org.scriptorium.cli.commands.author;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;

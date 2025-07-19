@@ -1,4 +1,4 @@
-package org.scriptorium.cli;
+package org.scriptorium.cli.commands.book;
 
 import org.scriptorium.cli.commands.book.BookCreateCommand;
 import org.scriptorium.cli.commands.book.BookImportCommand;

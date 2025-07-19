@@ -1,6 +1,5 @@
 package org.scriptorium.cli.commands.publisher;
 
-import org.scriptorium.cli.PublisherCommand;
 import org.scriptorium.core.domain.Publisher;
 import org.scriptorium.core.services.PublisherService;
 import org.scriptorium.core.exceptions.DataAccessException;

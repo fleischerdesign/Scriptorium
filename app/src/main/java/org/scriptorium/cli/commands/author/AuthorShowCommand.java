@@ -1,6 +1,5 @@
 package org.scriptorium.cli.commands.author;
 
-import org.scriptorium.cli.AuthorCommand;
 import org.scriptorium.core.domain.Author;
 import org.scriptorium.core.services.AuthorService;
 import org.scriptorium.core.exceptions.DataAccessException;

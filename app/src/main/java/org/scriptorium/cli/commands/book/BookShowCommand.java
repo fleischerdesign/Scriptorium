@@ -1,6 +1,5 @@
 package org.scriptorium.cli.commands.book;
 
-import org.scriptorium.cli.BookCommand;
 import org.scriptorium.core.domain.Book;
 import org.scriptorium.core.services.BookService;
 import org.scriptorium.core.exceptions.DataAccessException;

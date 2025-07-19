@@ -1,4 +1,4 @@
-package org.scriptorium.cli;
+package org.scriptorium.cli.commands.user;
 
 import org.scriptorium.cli.commands.user.UserCreateCommand;
 import org.scriptorium.cli.commands.user.UserDeleteCommand;

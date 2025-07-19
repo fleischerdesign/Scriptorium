@@ -1,4 +1,4 @@
-package org.scriptorium.cli;
+package org.scriptorium.cli.commands.publisher;
 
 import org.scriptorium.cli.commands.publisher.PublisherCreateCommand;
 import org.scriptorium.cli.commands.publisher.PublisherDeleteCommand;
