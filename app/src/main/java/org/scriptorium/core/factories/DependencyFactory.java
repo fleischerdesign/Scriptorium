@@ -25,6 +25,13 @@ import org.scriptorium.cli.commands.loan.LoanDeleteCommand;
 import org.scriptorium.cli.commands.loan.LoanListCommand;
 import org.scriptorium.cli.commands.loan.LoanReturnCommand;
 import org.scriptorium.cli.commands.loan.LoanShowCommand;
+import org.scriptorium.cli.commands.reservation.ReservationCommand;
+import org.scriptorium.cli.commands.reservation.ReservationCreateCommand;
+import org.scriptorium.cli.commands.reservation.ReservationCancelCommand;
+import org.scriptorium.cli.commands.reservation.ReservationFulfillCommand;
+import org.scriptorium.cli.commands.reservation.ReservationListCommand;
+import org.scriptorium.cli.commands.reservation.ReservationShowCommand;
+import org.scriptorium.cli.commands.reservation.ReservationDeleteCommand;
 import org.scriptorium.cli.commands.loan.LoanUpdateCommand;
 import org.scriptorium.cli.commands.publisher.PublisherCreateCommand;
 import org.scriptorium.cli.commands.publisher.PublisherDeleteCommand;
@@ -52,9 +59,12 @@ import org.scriptorium.core.repositories.JdbcAuthorRepository;
 import org.scriptorium.core.repositories.JdbcPublisherRepository;
 import org.scriptorium.core.repositories.JdbcLoanRepository;
 import org.scriptorium.core.repositories.LoanRepository;
+import org.scriptorium.core.repositories.ReservationRepository; // New
+import org.scriptorium.core.repositories.JdbcReservationRepository; // New
 import org.scriptorium.core.services.BookService;
 import org.scriptorium.core.services.PublisherService;
 import org.scriptorium.core.services.LoanService;
+import org.scriptorium.core.services.ReservationService; // New
 
 import picocli.CommandLine;
 
@@ -84,8 +94,10 @@ public class DependencyFactory implements CommandLine.IFactory {
     private final BookService bookService;
     private final GenreRepository genreRepository;
     private final GenreService genreService;
-    private final LoanRepository loanRepository; // New
-    private final LoanService loanService;     // New
+    private final LoanRepository loanRepository;
+    private final LoanService loanService;
+    private final ReservationRepository reservationRepository; // New
+    private final ReservationService reservationService;     // New
 
     public DependencyFactory() {
         this.userRepository = new JdbcUserRepository("jdbc:sqlite:scriptorium.db");
@@ -108,9 +120,13 @@ public class DependencyFactory implements CommandLine.IFactory {
         ((JdbcBookRepository) this.bookRepository).init(); // Explicitly call init
         this.bookService = new BookService(bookRepository);
 
-        this.loanRepository = new JdbcLoanRepository("jdbc:sqlite:scriptorium.db", bookRepository, userRepository); // Initialize LoanRepository
+        this.loanRepository = new JdbcLoanRepository("jdbc:sqlite:scriptorium.db", bookRepository, userRepository);
         ((JdbcLoanRepository) this.loanRepository).init(); // Explicitly call init
-        this.loanService = new LoanService(loanRepository, bookRepository, userRepository); // Initialize LoanService
+        this.loanService = new LoanService(loanRepository, bookRepository, userRepository);
+
+        this.reservationRepository = new JdbcReservationRepository("jdbc:sqlite:scriptorium.db", bookRepository, userRepository); // Initialize ReservationRepository
+        ((JdbcReservationRepository) this.reservationRepository).init(); // Explicitly call init
+        this.reservationService = new ReservationService(reservationRepository, bookRepository, userRepository); // Initialize ReservationService
 
         this.bookFactory = new BookFactory(genreService);
         this.bookImportService = new BookImportService(httpClient, bookFactory, genreService);
@@ -233,6 +249,27 @@ public class DependencyFactory implements CommandLine.IFactory {
         }
         if (cls.isAssignableFrom(LoanReturnCommand.class)) {
             return (K) new LoanReturnCommand(loanService);
+        }
+        if (cls.isAssignableFrom(ReservationCommand.class)) {
+            return (K) new ReservationCommand();
+        }
+        if (cls.isAssignableFrom(ReservationCreateCommand.class)) {
+            return (K) new ReservationCreateCommand(reservationService, bookService, userService);
+        }
+        if (cls.isAssignableFrom(ReservationCancelCommand.class)) {
+            return (K) new ReservationCancelCommand(reservationService);
+        }
+        if (cls.isAssignableFrom(ReservationFulfillCommand.class)) {
+            return (K) new ReservationFulfillCommand(reservationService);
+        }
+        if (cls.isAssignableFrom(ReservationListCommand.class)) {
+            return (K) new ReservationListCommand(reservationService);
+        }
+        if (cls.isAssignableFrom(ReservationShowCommand.class)) {
+            return (K) new ReservationShowCommand(reservationService);
+        }
+        if (cls.isAssignableFrom(ReservationDeleteCommand.class)) {
+            return (K) new ReservationDeleteCommand(reservationService);
         }
 
         // For commands with no dependencies, or for Picocli's internal classes,
