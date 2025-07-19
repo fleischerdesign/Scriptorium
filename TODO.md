@@ -4,34 +4,9 @@ This file lists tasks and potential improvements for the Scriptorium CLI applica
 
 ## Current / Immediate Tasks
 
-*   **Implement actual book saving logic:**
-    *   In `ImportBookCommand.java`, the selected book is currently only printed to the console. Implement the logic to save the book to a persistent storage (e.g., a database).
 
 ## Core Library System Features
 
-*   **Book Management (CRUD):**
-    *   `add-book`: Manually add a book to the library (for books not found via import).
-    *   `list-books`: Display all books in the library, with filtering and sorting options (e.g., by author, title, genre).
-    *   `update-book`: Modify details of an existing book.
-    *   `delete-book`: Remove a book from the library.
-    *   `search-books`: Search local library for books by various criteria.
-
-*   **User Management:**
-    *   `add-user`: Register new library users.
-    *   `list-users`: Display all registered users.
-    *   `update-user`: Modify user details.
-    *   `delete-user`: Remove a user.
-
-*   **Loan Management:**
-    *   `borrow-book`: Record a book loan to a user.
-    *   `return-book`: Mark a book as returned.
-    *   `list-loans`: View current and past loans, filter by user or book.
-    *   `overdue-loans`: Identify and list overdue books.
-
-*   **Reservation Management:**
-    *   `reserve-book`: Allow users to reserve books that are currently on loan.
-    *   `cancel-reservation`: Cancel an existing reservation.
-    *   `list-reservations`: View all active reservations.
 
 ## Future Enhancements / Ideas
 
