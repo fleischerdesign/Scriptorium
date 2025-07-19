@@ -118,7 +118,7 @@ public class DependencyFactory implements CommandLine.IFactory {
 
     /**
      * Called by Picocli to create an instance of a command class.
-     *
+     * 
      * @param cls The class of the command to instantiate.
      * @param <K> The type of the command.
      * @return A fully configured instance of the command, with dependencies injected.
@@ -129,7 +129,7 @@ public class DependencyFactory implements CommandLine.IFactory {
     public <K> K create(Class<K> cls) throws Exception {
         // Check which command Picocli wants and inject the required services.
         if (cls.isAssignableFrom(BookImportCommand.class)) {
-            return (K) new BookImportCommand(bookImportService, scanner, genreService);
+            return (K) new BookImportCommand(bookImportService, scanner, genreService, bookService);
         }
         if (cls.isAssignableFrom(UserListCommand.class)) {
             return (K) new UserListCommand(userService);

@@ -37,6 +37,16 @@ public class JdbcGenreRepository implements GenreRepository {
                     + " name TEXT NOT NULL UNIQUE\n"
                     + ");";
             stmt.execute(sql);
+
+            // Ensure 'UNKNOWN' genre exists
+            String checkUnknownGenreSql = "SELECT COUNT(*) FROM genres WHERE name = 'UNKNOWN'";
+            try (ResultSet rs = stmt.executeQuery(checkUnknownGenreSql)) {
+                if (rs.next() && rs.getInt(1) == 0) {
+                    String insertUnknownGenreSql = "INSERT INTO genres(name) VALUES('UNKNOWN')";
+                    stmt.executeUpdate(insertUnknownGenreSql);
+                }
+            }
+
         } catch (SQLException e) {
             throw new DataAccessException("Error initializing genres table: " + e.getMessage(), e);
         }

@@ -3,7 +3,9 @@ package org.scriptorium.cli.commands.book;
 import org.scriptorium.core.domain.Author;
 import org.scriptorium.core.domain.Book;
 import org.scriptorium.core.services.BookImportService;
+import org.scriptorium.core.services.BookService;
 import org.scriptorium.core.services.GenreService;
+import org.scriptorium.core.exceptions.DataAccessException;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
@@ -23,6 +25,7 @@ public class BookImportCommand implements Runnable {
 
     private final BookImportService bookImportService;
     private final Scanner scanner;
+    private final BookService bookService; // New dependency
 
     /**
      * Optional command-line parameter for the book title.
@@ -37,10 +40,12 @@ public class BookImportCommand implements Runnable {
      * @param bookImportService The service responsible for fetching book data.
      * @param scanner The scanner used for interactive user input.
      * @param genreService The service for managing genre entities.
+     * @param bookService The service for managing book entities. // New parameter
      */
-    public BookImportCommand(BookImportService bookImportService, Scanner scanner, GenreService genreService) {
+    public BookImportCommand(BookImportService bookImportService, Scanner scanner, GenreService genreService, BookService bookService) {
         this.bookImportService = bookImportService;
         this.scanner = scanner;
+        this.bookService = bookService; // Assign new dependency
     }
 
     /**
@@ -105,15 +110,18 @@ public class BookImportCommand implements Runnable {
                 String selectedAuthorsDisplay = selectedBook.getAuthors().stream()
                                                     .map(Author::getName)
                                                     .collect(Collectors.joining(", "));
-                System.out.printf("Selected for import (but not yet saved): %s by %s%n",
+                System.out.printf("Selected for import: %s by %s%n",
                                   selectedBook.getTitle(), selectedAuthorsDisplay);
 
-                // TODO: Actual import (saving) logic here
-                System.out.println("This book would now be saved to your library.");
+                // Actual import (saving) logic here
+                Book savedBook = bookService.save(selectedBook);
+                System.out.println("Book imported and saved successfully with ID: " + savedBook.getId());
 
             } else {
                 System.out.println("Import cancelled.");
             }
+        } catch (DataAccessException e) {
+            System.err.println("Error saving book: " + e.getMessage());
         } catch (IllegalArgumentException e) {
             System.err.println("Validation Error during book processing: " + e.getMessage());
         } catch (Exception e) {

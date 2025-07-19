@@ -74,7 +74,9 @@ public class BookFactory {
 
         // --- 6. Handle Genre ---
         // For now, always use UNKNOWN, as OpenLibraryBook DTO does not provide a direct genre field.
-        Genre genre = genreService.createGenre(new Genre("UNKNOWN"));
+        // Check if genre exists, otherwise create it.
+        Genre genre = genreService.findGenreByName("UNKNOWN")
+                                  .orElseGet(() -> genreService.createGenre(new Genre("UNKNOWN")));
 
         // --- 7. Handle Description (if OpenLibraryBook has one, not in the provided DTO) ---
         // Assuming OpenLibraryBook might have a description field (e.g., apiBook.getDescription())

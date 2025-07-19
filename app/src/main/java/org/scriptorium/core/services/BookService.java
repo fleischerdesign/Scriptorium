@@ -39,6 +39,19 @@ public class BookService {
     }
 
     /**
+     * Saves a book. This method handles both creation and update based on whether the book has an ID.
+     * @param book The book object to save.
+     * @return The saved book, with its ID set if it was a new creation.
+     */
+    public Book save(Book book) {
+        try {
+            return bookRepository.save(book);
+        } catch (DataAccessException e) {
+            throw new DataAccessException("Failed to save book: " + e.getMessage(), e);
+        }
+    }
+
+    /**
      * Finds a book by its ID.
      * @param id The ID of the book to find.
      * @return An Optional containing the book if found.
