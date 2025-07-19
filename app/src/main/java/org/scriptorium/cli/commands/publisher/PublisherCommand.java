@@ -1,9 +1,5 @@
 package org.scriptorium.cli.commands.publisher;
 
-import org.scriptorium.cli.commands.publisher.PublisherCreateCommand;
-import org.scriptorium.cli.commands.publisher.PublisherDeleteCommand;
-import org.scriptorium.cli.commands.publisher.PublisherListCommand;
-
 import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;
 

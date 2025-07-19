@@ -1,11 +1,5 @@
 package org.scriptorium.cli.commands.user;
 
-import org.scriptorium.cli.commands.user.UserCreateCommand;
-import org.scriptorium.cli.commands.user.UserDeleteCommand;
-import org.scriptorium.cli.commands.user.UserListCommand;
-import org.scriptorium.cli.commands.user.UserShowCommand;
-import org.scriptorium.cli.commands.user.UserUpdateCommand;
-
 import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;
 

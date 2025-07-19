@@ -1,11 +1,5 @@
 package org.scriptorium.cli.commands.book;
 
-import org.scriptorium.cli.commands.book.BookCreateCommand;
-import org.scriptorium.cli.commands.book.BookImportCommand;
-import org.scriptorium.cli.commands.book.BookListCommand;
-import org.scriptorium.cli.commands.book.BookShowCommand;
-import org.scriptorium.cli.commands.book.BookUpdateCommand;
-
 import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;
 
