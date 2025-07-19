@@ -1,8 +1,9 @@
 package org.scriptorium.core.factories;
 
 import org.scriptorium.core.domain.Author;
-import org.scriptorium.core.domain.Book; // Your updated Book entity
+import org.scriptorium.core.domain.Book; // Updated Book entity
 import org.scriptorium.core.domain.Genre;
+import org.scriptorium.core.services.GenreService;
 import org.scriptorium.core.domain.Publisher;
 import org.scriptorium.core.dto.OpenLibraryBook;
 import java.util.ArrayList;
@@ -16,6 +17,12 @@ import java.util.stream.Collectors;
  * from data transfer objects (DTOs) or other raw data sources.
  */
 public class BookFactory {
+
+    private final GenreService genreService;
+
+    public BookFactory(GenreService genreService) {
+        this.genreService = genreService;
+    }
 
     /**
      * Creates a domain {@link Book} entity from an {@link OpenLibraryBook} DTO.
@@ -66,10 +73,10 @@ public class BookFactory {
         isbns = isbns.stream().distinct().collect(Collectors.toList());
 
         // --- 6. Handle Genre ---
-        // For now, always use UNKNOWN, or implement mapping logic if possible
-        Genre genre = Genre.UNKNOWN; // Or implement mapping logic from apiBook.getSubjects() etc.
+        // For now, always use UNKNOWN, as OpenLibraryBook DTO does not provide a direct genre field.
+        Genre genre = genreService.createGenre(new Genre("UNKNOWN"));
 
-        // --- 7. Handle Description (if OpenLibraryBook has one, not in your provided DTO) ---
+        // --- 7. Handle Description (if OpenLibraryBook has one, not in the provided DTO) ---
         // Assuming OpenLibraryBook might have a description field (e.g., apiBook.getDescription())
         String description = null; // Default to null if not available or mapped
 
@@ -81,8 +88,8 @@ public class BookFactory {
             genre,
             firstPublishYear,
             mainPublisher,
-            description, // Pass description
-            isbns        // Pass collected ISBNs
+            description,
+            isbns
         );
     }
 }

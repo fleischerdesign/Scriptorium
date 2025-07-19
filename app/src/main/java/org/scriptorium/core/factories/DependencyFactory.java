@@ -13,9 +13,18 @@ import org.scriptorium.cli.commands.book.BookImportCommand;
 import org.scriptorium.cli.commands.book.BookListCommand;
 import org.scriptorium.cli.commands.book.BookShowCommand;
 import org.scriptorium.cli.commands.book.BookUpdateCommand;
+import org.scriptorium.cli.commands.genre.GenreCommand;
+import org.scriptorium.cli.commands.genre.GenreCreateCommand;
+import org.scriptorium.cli.commands.genre.GenreDeleteCommand;
+import org.scriptorium.cli.commands.genre.GenreListCommand;
+import org.scriptorium.cli.commands.genre.GenreShowCommand;
+import org.scriptorium.cli.commands.genre.GenreUpdateCommand;
 import org.scriptorium.cli.commands.publisher.PublisherCreateCommand;
 import org.scriptorium.cli.commands.publisher.PublisherDeleteCommand;
 import org.scriptorium.cli.commands.publisher.PublisherListCommand;
+import org.scriptorium.core.repositories.GenreRepository;
+import org.scriptorium.core.repositories.JdbcGenreRepository;
+import org.scriptorium.core.services.GenreService;
 import org.scriptorium.core.http.SimpleHttpClient;
 import org.scriptorium.core.services.AuthorService;
 import org.scriptorium.core.services.BookImportService;
@@ -53,7 +62,7 @@ public class DependencyFactory implements CommandLine.IFactory {
     // Single, long-lived instances of all application services.
     private final Scanner scanner = new Scanner(System.in);
     private final SimpleHttpClient httpClient = new SimpleHttpClient();
-    private final BookFactory bookFactory = new BookFactory();
+    private final BookFactory bookFactory;
     private final BookImportService bookImportService;
     private final UserRepository userRepository;
     private final UserService userService;
@@ -63,10 +72,10 @@ public class DependencyFactory implements CommandLine.IFactory {
     private final PublisherService publisherService;
     private final BookRepository bookRepository;
     private final BookService bookService;
+    private final GenreRepository genreRepository;
+    private final GenreService genreService;
 
     public DependencyFactory() {
-        this.bookImportService = new BookImportService(httpClient, bookFactory);
-
         this.userRepository = new JdbcUserRepository("jdbc:sqlite:scriptorium.db");
         ((JdbcUserRepository) this.userRepository).init(); // Explicitly call init
         this.userService = new UserService(userRepository);
@@ -79,9 +88,16 @@ public class DependencyFactory implements CommandLine.IFactory {
         ((JdbcPublisherRepository) this.publisherRepository).init(); // Explicitly call init
         this.publisherService = new PublisherService(publisherRepository);
 
-        this.bookRepository = new JdbcBookRepository("jdbc:sqlite:scriptorium.db", authorRepository, publisherRepository);
+        this.genreRepository = new JdbcGenreRepository("jdbc:sqlite:scriptorium.db");
+        ((JdbcGenreRepository) this.genreRepository).init(); // Explicitly call init
+        this.genreService = new GenreService(genreRepository);
+
+        this.bookRepository = new JdbcBookRepository("jdbc:sqlite:scriptorium.db", authorRepository, publisherRepository, genreRepository);
         ((JdbcBookRepository) this.bookRepository).init(); // Explicitly call init
         this.bookService = new BookService(bookRepository);
+
+        this.bookFactory = new BookFactory(genreService);
+        this.bookImportService = new BookImportService(httpClient, bookFactory, genreService);
     }
 
     /**
@@ -97,7 +113,7 @@ public class DependencyFactory implements CommandLine.IFactory {
     public <K> K create(Class<K> cls) throws Exception {
         // Check which command Picocli wants and inject the required services.
         if (cls.isAssignableFrom(BookImportCommand.class)) {
-            return (K) new BookImportCommand(bookImportService, scanner);
+            return (K) new BookImportCommand(bookImportService, scanner, genreService);
         }
         if (cls.isAssignableFrom(UserListCommand.class)) {
             return (K) new UserListCommand(userService);
@@ -121,7 +137,7 @@ public class DependencyFactory implements CommandLine.IFactory {
             return (K) new BookCommand();
         }
         if (cls.isAssignableFrom(BookCreateCommand.class)) {
-            return (K) new BookCreateCommand(bookService);
+            return (K) new BookCreateCommand(bookService, genreService);
         }
         if (cls.isAssignableFrom(BookShowCommand.class)) {
             return (K) new BookShowCommand(bookService);
@@ -130,7 +146,7 @@ public class DependencyFactory implements CommandLine.IFactory {
             return (K) new BookListCommand(bookService);
         }
         if (cls.isAssignableFrom(BookUpdateCommand.class)) {
-            return (K) new BookUpdateCommand(bookService);
+            return (K) new BookUpdateCommand(bookService, genreService);
         }
         if (cls.isAssignableFrom(BookDeleteCommand.class)) {
             return (K) new BookDeleteCommand(bookService);
@@ -161,6 +177,25 @@ public class DependencyFactory implements CommandLine.IFactory {
         }
         if (cls.isAssignableFrom(PublisherListCommand.class)) {
             return (K) new PublisherListCommand(publisherService);
+        }
+
+        if (cls.isAssignableFrom(GenreCommand.class)) {
+            return (K) new GenreCommand();
+        }
+        if (cls.isAssignableFrom(GenreCreateCommand.class)) {
+            return (K) new GenreCreateCommand(genreService);
+        }
+        if (cls.isAssignableFrom(GenreDeleteCommand.class)) {
+            return (K) new GenreDeleteCommand(genreService);
+        }
+        if (cls.isAssignableFrom(GenreListCommand.class)) {
+            return (K) new GenreListCommand(genreService);
+        }
+        if (cls.isAssignableFrom(GenreShowCommand.class)) {
+            return (K) new GenreShowCommand(genreService);
+        }
+        if (cls.isAssignableFrom(GenreUpdateCommand.class)) {
+            return (K) new GenreUpdateCommand(genreService);
         }
 
         // For commands with no dependencies, or for Picocli's internal classes,

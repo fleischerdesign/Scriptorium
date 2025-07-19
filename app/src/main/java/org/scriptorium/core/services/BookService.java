@@ -30,7 +30,7 @@ public class BookService {
      */
     public Book createBook(Book book) {
         try {
-            // In a real application, you might add more complex validation here
+            // In a real application, more complex validation might be added here
             // e.g., check if authors/publisher exist or create them if they don't
             return bookRepository.save(book);
         } catch (DataAccessException e) {

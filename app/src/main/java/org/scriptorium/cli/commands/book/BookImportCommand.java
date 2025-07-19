@@ -3,6 +3,7 @@ package org.scriptorium.cli.commands.book;
 import org.scriptorium.core.domain.Author;
 import org.scriptorium.core.domain.Book;
 import org.scriptorium.core.services.BookImportService;
+import org.scriptorium.core.services.GenreService;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
@@ -22,6 +23,7 @@ public class BookImportCommand implements Runnable {
 
     private final BookImportService bookImportService;
     private final Scanner scanner;
+    private final GenreService genreService;
 
     /**
      * Optional command-line parameter for the book title.
@@ -35,10 +37,12 @@ public class BookImportCommand implements Runnable {
      *
      * @param bookImportService The service responsible for fetching book data.
      * @param scanner The scanner used for interactive user input.
+     * @param genreService The service for managing genre entities.
      */
-    public BookImportCommand(BookImportService bookImportService, Scanner scanner) {
+    public BookImportCommand(BookImportService bookImportService, Scanner scanner, GenreService genreService) {
         this.bookImportService = bookImportService;
         this.scanner = scanner;
+        this.genreService = genreService;
     }
 
     /**

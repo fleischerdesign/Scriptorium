@@ -29,10 +29,11 @@ public class BookImportService {
      *
      * @param httpClient  The client for making HTTP requests to the OpenLibrary API.
      * @param bookFactory The factory for converting API DTOs into domain objects.
+     * @param genreService The service for managing genre entities.
      */
-    public BookImportService(SimpleHttpClient httpClient, BookFactory bookFactory) {
+    public BookImportService(SimpleHttpClient httpClient, BookFactory bookFactory, GenreService genreService) {
         this.httpClient = httpClient;
-        this.bookFactory = bookFactory;
+        this.bookFactory = new BookFactory(genreService);
     }
 
     /**

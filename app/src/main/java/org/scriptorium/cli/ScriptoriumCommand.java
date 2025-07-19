@@ -3,6 +3,7 @@ package org.scriptorium.cli;
 import org.scriptorium.cli.commands.ExitCommand;
 import org.scriptorium.cli.commands.author.AuthorCommand;
 import org.scriptorium.cli.commands.book.BookCommand;
+import org.scriptorium.cli.commands.genre.GenreCommand;
 import org.scriptorium.cli.commands.publisher.PublisherCommand;
 import org.scriptorium.cli.commands.user.UserCommand;
 import picocli.CommandLine.Command;
@@ -19,6 +20,7 @@ import picocli.CommandLine.HelpCommand;
         UserCommand.class,
         AuthorCommand.class,
         PublisherCommand.class,
+        GenreCommand.class,
         ExitCommand.class,
         HelpCommand.class
 })

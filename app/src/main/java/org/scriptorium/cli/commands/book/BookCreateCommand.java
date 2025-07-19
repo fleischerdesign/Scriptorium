@@ -5,6 +5,7 @@ import org.scriptorium.core.domain.Author;
 import org.scriptorium.core.domain.Publisher;
 import org.scriptorium.core.domain.Genre; // Import Genre
 import org.scriptorium.core.services.BookService;
+import org.scriptorium.core.services.GenreService;
 import org.scriptorium.core.exceptions.DataAccessException;
 
 import picocli.CommandLine.Command;
@@ -32,13 +33,16 @@ public class BookCreateCommand implements Callable<Integer> {
     BookCommand parent; // Injects the parent command (BookCommand)
 
     private final BookService bookService;
+    private final GenreService genreService;
 
     /**
      * Constructor for BookCreateCommand.
      * @param bookService The service responsible for book operations.
+     * @param genreService The service responsible for genre operations.
      */
-    public BookCreateCommand(BookService bookService) {
+    public BookCreateCommand(BookService bookService, GenreService genreService) {
         this.bookService = bookService;
+        this.genreService = genreService;
     }
 
     @Option(names = {"-t", "--title"}, description = "Title of the book", required = true)
@@ -77,7 +81,10 @@ public class BookCreateCommand implements Callable<Integer> {
                                        .map(Author::new)
                                        .collect(Collectors.toList()));
             newBook.setMainPublisher(new Publisher(publisherName));
-            newBook.setGenre(Genre.fromString(genre)); // Convert genre string to Genre enum
+            // Handle Genre: Find existing or create new one
+            Genre bookGenre = genreService.findGenreByName(genre)
+                                        .orElseGet(() -> genreService.createGenre(new Genre(genre)));
+            newBook.setGenre(bookGenre);
             newBook.setDescription(""); // Default description
 
             Book createdBook = bookService.createBook(newBook);

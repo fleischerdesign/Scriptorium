@@ -5,6 +5,7 @@ import org.scriptorium.core.domain.Book;
 import org.scriptorium.core.domain.Genre;
 import org.scriptorium.core.domain.Publisher;
 import org.scriptorium.core.exceptions.DataAccessException;
+import org.scriptorium.core.repositories.GenreRepository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,17 +22,20 @@ public class JdbcBookRepository implements BookRepository {
     private final String dbUrl;
     private final AuthorRepository authorRepository;
     private final PublisherRepository publisherRepository;
+    private final GenreRepository genreRepository;
 
     /**
      * Constructs a new JdbcBookRepository with the specified database URL and dependent repositories.
      * @param dbUrl The JDBC URL for the SQLite database.
      * @param authorRepository The repository for Author entities.
      * @param publisherRepository The repository for Publisher entities.
+     * @param genreRepository The repository for Genre entities.
      */
-    public JdbcBookRepository(String dbUrl, AuthorRepository authorRepository, PublisherRepository publisherRepository) {
+    public JdbcBookRepository(String dbUrl, AuthorRepository authorRepository, PublisherRepository publisherRepository, GenreRepository genreRepository) {
         this.dbUrl = dbUrl;
         this.authorRepository = authorRepository;
         this.publisherRepository = publisherRepository;
+        this.genreRepository = genreRepository;
     }
 
     public void init() {
@@ -41,11 +45,12 @@ public class JdbcBookRepository implements BookRepository {
             String createBooksTable = "CREATE TABLE IF NOT EXISTS books ("
                     + " id INTEGER PRIMARY KEY AUTOINCREMENT,"
                     + " title TEXT NOT NULL,"
-                    + " genre TEXT NOT NULL,"
+                    + " genre_id INTEGER,"
                     + " publicationYear INTEGER,"
                     + " publisher_id INTEGER,"
                     + " description TEXT,"
-                    + " FOREIGN KEY (publisher_id) REFERENCES publishers(id) ON DELETE SET NULL"
+                    + " FOREIGN KEY (publisher_id) REFERENCES publishers(id) ON DELETE SET NULL,"
+                    + " FOREIGN KEY (genre_id) REFERENCES genres(id) ON DELETE SET NULL"
                     + ");";
             stmt.execute(createBooksTable);
 
@@ -83,7 +88,7 @@ public class JdbcBookRepository implements BookRepository {
     @Override
     public Optional<Book> findById(Long id) {
         // SQL queries to fetch book details, authors, and ISBNs
-        String bookSql = "SELECT id, title, genre, publicationYear, publisher_id, description FROM books WHERE id = ?";
+        String bookSql = "SELECT id, title, genre_id, publicationYear, publisher_id, description FROM books WHERE id = ?";
         String authorsSql = "SELECT a.id, a.name FROM authors a JOIN book_authors ba ON a.id = ba.author_id WHERE ba.book_id = ?";
         String isbnsSql = "SELECT isbn_value FROM book_isbns WHERE book_id = ?";
 
@@ -104,7 +109,7 @@ public class JdbcBookRepository implements BookRepository {
             Book book = new Book();
             book.setId(rsBook.getLong("id"));
             book.setTitle(rsBook.getString("title"));
-            book.setGenre(Genre.fromString(rsBook.getString("genre")));
+            book.setGenre(genreRepository.findById(rsBook.getLong("genre_id")).orElse(null));
             book.setPublicationYear(rsBook.getInt("publicationYear"));
             book.setDescription(rsBook.getString("description"));
 
@@ -150,7 +155,7 @@ public class JdbcBookRepository implements BookRepository {
      */
     @Override
     public List<Book> findAll() {
-        String bookSql = "SELECT b.id, b.title, b.genre, b.publicationYear, b.publisher_id, b.description, " +
+        String bookSql = "SELECT b.id, b.title, b.genre_id, b.publicationYear, b.publisher_id, b.description, " +
                          "p.name AS publisherName " +
                          "FROM books b LEFT JOIN publishers p ON b.publisher_id = p.id";
         String authorsSql = "SELECT a.id, a.name FROM authors a JOIN book_authors ba ON a.id = ba.author_id WHERE ba.book_id = ?";
@@ -167,7 +172,7 @@ public class JdbcBookRepository implements BookRepository {
                 Book book = new Book();
                 book.setId(rsBooks.getLong("id"));
                 book.setTitle(rsBooks.getString("title"));
-                book.setGenre(Genre.fromString(rsBooks.getString("genre")));
+                book.setGenre(genreRepository.findById(rsBooks.getLong("genre_id")).orElse(null));
                 book.setPublicationYear(rsBooks.getInt("publicationYear"));
                 book.setDescription(rsBooks.getString("description"));
 
@@ -232,12 +237,16 @@ public class JdbcBookRepository implements BookRepository {
      * @throws DataAccessException if the insertion fails.
      */
     private Book insert(Book book) {
-        String sql = "INSERT INTO books(title, genre, publicationYear, publisher_id, description) VALUES(?,?,?,?,?)";
+        String sql = "INSERT INTO books(title, genre_id, publicationYear, publisher_id, description) VALUES(?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(dbUrl);
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             pstmt.setString(1, book.getTitle());
-            pstmt.setString(2, book.getGenre().name()); // Store enum name as string
+            if (book.getGenre() != null && book.getGenre().getId() != null) {
+                pstmt.setLong(2, book.getGenre().getId());
+            } else {
+                pstmt.setNull(2, Types.INTEGER);
+            }
             pstmt.setInt(3, book.getPublicationYear());
 
             // Handle Publisher: Find existing or save new one
@@ -324,12 +333,16 @@ public class JdbcBookRepository implements BookRepository {
      * @throws DataAccessException if the update fails.
      */
     private Book update(Book book) {
-        String sql = "UPDATE books SET title = ?, genre = ?, publicationYear = ?, publisher_id = ?, description = ? WHERE id = ?";
+        String sql = "UPDATE books SET title = ?, genre_id = ?, publicationYear = ?, publisher_id = ?, description = ? WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(dbUrl);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, book.getTitle());
-            pstmt.setString(2, book.getGenre().name());
+            if (book.getGenre() != null && book.getGenre().getId() != null) {
+                pstmt.setLong(2, book.getGenre().getId());
+            } else {
+                pstmt.setNull(2, Types.INTEGER);
+            }
             pstmt.setInt(3, book.getPublicationYear());
 
             // Handle Publisher: Find existing or save new one
