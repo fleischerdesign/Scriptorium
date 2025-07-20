@@ -72,6 +72,9 @@ This file lists tasks and potential improvements for the Scriptorium CLI applica
 *   **Scheduled Tasks/Automation:**
     *   Implement a mechanism to schedule recurring tasks, such as generating daily reports, sending out overdue reminders, or performing database backups.
     *   This could involve integrating with a job scheduling library (e.g., Quartz Scheduler) and new commands to define and manage scheduled jobs.
+*   **Suggestive Search/Autocompletion for Input:**
+    *   Beyond command autocompletion, implement suggestive search for data inputs (e.g., when typing an author's name, suggest existing authors from the database; when typing a book title, suggest existing titles).
+    *   This would enhance user experience by reducing typing errors and speeding up data entry, requiring integration with the CLI's input handling and database lookups.
 *   **Testing:**
     *   Add integration tests for the `BookImportService` and other services.
     *   Ensure comprehensive unit test coverage for all core logic.
