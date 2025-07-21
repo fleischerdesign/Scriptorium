@@ -10,10 +10,7 @@ This file lists tasks and potential improvements for the Scriptorium CLI applica
 
 ## Future Enhancements / Ideas
 
-*   **Database Integration:**
-    *   Implement a `BookRepository` to handle CRUD operations with a database.
-    *   Integrate a database (e.g., SQLite, H2) to persist book data.
-    *   Add commands for listing, updating, and deleting books from the library.
+
 *   **Configuration Management:**
     *   Load application configuration (e.g., API keys, database connection strings) from a file (e.g., `config.properties`, `application.yml`).
     *   Utilize the `DependencyFactory` to inject configured values into services.
@@ -22,8 +19,6 @@ This file lists tasks and potential improvements for the Scriptorium CLI applica
 *   **More Robust Error Handling:**
     *   Improve user-facing error messages for network issues, parsing errors, etc.
     *   Consider more specific exception types where appropriate.
-*   **User Management & Loans/Reservations:**
-    *   Expand the domain model (`User`, `Loan`, `Reservation`) and implement corresponding services and commands.
 *   **Advanced CLI Features:**
     *   Implement command auto-completion for subcommands and parameters (JLine3 supports this).
     *   Add more sophisticated output formatting (e.g., tables for `list-books`).
@@ -78,3 +73,43 @@ This file lists tasks and potential improvements for the Scriptorium CLI applica
 *   **Testing:**
     *   Add integration tests for the `BookImportService` and other services.
     *   Ensure comprehensive unit test coverage for all core logic.
+
+## Completed Tasks
+
+*   **User Management & Loans/Reservations:**
+    *   Expand the domain model (`User`, `Loan`, `Reservation`) and implement corresponding services and commands.
+*   **Initial Setup:**
+    *   Set up the project structure with Gradle.
+    *   Initialize the SQLite database.
+*   **Core Models:**
+    *   Define `User`, `Book`, `Author`, `Publisher` domain models.
+*   **Basic CLI Commands:**
+    *   Implement `user create`, `user list`, `book create`, `book list`.
+*   **Book Import:**
+    *   Implement `book import` from Open Library.
+*   **Password Hashing:**
+    *   Integrate jBCrypt for secure password storage.
+*   **Interactive Shell:**
+    *   Set up an interactive shell using Picocli.
+*   **Initial Repository Layer:**
+    *   Implement JDBC repositories for `User`, `Book`, `Author`, `Publisher`.
+*   **Initial Service Layer:**
+    *   Implement services for `User`, `Book`, `Author`, `Publisher`.
+*   **Initial Test Suite:**
+    *   Set up JUnit 5 and Mockito.
+    *   Write initial unit tests for key components.
+*   **Refined CLI Commands:**
+    *   Implement `show`, `update`, `delete` for all core entities.
+*   **Help and Usage Messages:**
+    *   Improve help messages and command descriptions in Picocli.
+*   **Data Seeding:**
+    *   Add a mechanism to seed the database with initial data for development and testing.
+*   **Refactoring and Code Cleanup:**
+    *   Refactor `DependencyFactory` to be more modular.
+    *   Improve code style and consistency.
+*   **Documentation:**
+    *   Write the initial `README.md` file.
+    *   Add Javadoc comments to public APIs.
+*   **Build and Distribution:**
+    *   Configure Gradle to produce a runnable JAR.
+*   _... and more ..._
