@@ -1,5 +1,6 @@
 package org.scriptorium.core.factories;
 
+import org.scriptorium.config.ConfigLoader;
 import org.scriptorium.cli.commands.author.AuthorCommand;
 import org.scriptorium.cli.commands.author.AuthorCreateCommand;
 import org.scriptorium.cli.commands.author.AuthorDeleteCommand;
@@ -89,6 +90,7 @@ import java.util.Scanner;
 public class DependencyFactory implements CommandLine.IFactory {
 
     // Single, long-lived instances of all application services.
+    private final ConfigLoader configLoader;
     private final Scanner scanner = new Scanner(System.in);
     private final SimpleHttpClient httpClient = new SimpleHttpClient();
     private final BookFactory bookFactory;
@@ -111,35 +113,38 @@ public class DependencyFactory implements CommandLine.IFactory {
     private final CopyService copyService;     // New
 
     public DependencyFactory() {
-        this.userRepository = new JdbcUserRepository("jdbc:sqlite:scriptorium.db");
+        this.configLoader = new ConfigLoader("config.properties");
+        String dbUrl = configLoader.getProperty("database.url", "jdbc:sqlite:scriptorium.db");
+
+        this.userRepository = new JdbcUserRepository(dbUrl);
         ((JdbcUserRepository) this.userRepository).init(); // Explicitly call init
         this.userService = new UserService(userRepository);
 
-        this.authorRepository = new JdbcAuthorRepository("jdbc:sqlite:scriptorium.db");
+        this.authorRepository = new JdbcAuthorRepository(dbUrl);
         ((JdbcAuthorRepository) this.authorRepository).init(); // Explicitly call init
         this.authorService = new AuthorService(authorRepository);
 
-        this.publisherRepository = new JdbcPublisherRepository("jdbc:sqlite:scriptorium.db");
+        this.publisherRepository = new JdbcPublisherRepository(dbUrl);
         ((JdbcPublisherRepository) this.publisherRepository).init(); // Explicitly call init
         this.publisherService = new PublisherService(publisherRepository);
 
-        this.genreRepository = new JdbcGenreRepository("jdbc:sqlite:scriptorium.db");
+        this.genreRepository = new JdbcGenreRepository(dbUrl);
         ((JdbcGenreRepository) this.genreRepository).init(); // Explicitly call init
         this.genreService = new GenreService(genreRepository);
 
-        this.bookRepository = new JdbcBookRepository("jdbc:sqlite:scriptorium.db", authorRepository, publisherRepository, genreRepository);
+        this.bookRepository = new JdbcBookRepository(dbUrl, authorRepository, publisherRepository, genreRepository);
         ((JdbcBookRepository) this.bookRepository).init(); // Explicitly call init
         this.bookService = new BookService(bookRepository);
 
-        this.copyRepository = new JdbcCopyRepository("jdbc:sqlite:scriptorium.db", bookRepository); // Initialize CopyRepository
+        this.copyRepository = new JdbcCopyRepository(dbUrl, bookRepository); // Initialize CopyRepository
         ((JdbcCopyRepository) this.copyRepository).init(); // Explicitly call init
         this.copyService = new CopyService(copyRepository, bookRepository); // Initialize CopyService
 
-        this.loanRepository = new JdbcLoanRepository("jdbc:sqlite:scriptorium.db", copyRepository, userRepository);
+        this.loanRepository = new JdbcLoanRepository(dbUrl, copyRepository, userRepository);
         ((JdbcLoanRepository) this.loanRepository).init(); // Explicitly call init
         this.loanService = new LoanService(loanRepository, copyRepository, userRepository);
 
-        this.reservationRepository = new JdbcReservationRepository("jdbc:sqlite:scriptorium.db", bookRepository, userRepository);
+        this.reservationRepository = new JdbcReservationRepository(dbUrl, bookRepository, userRepository);
         ((JdbcReservationRepository) this.reservationRepository).init(); // Explicitly call init
         this.reservationService = new ReservationService(reservationRepository, bookRepository, userRepository);
 

@@ -3,7 +3,6 @@ package org.scriptorium.core.repositories;
 import org.scriptorium.core.domain.Copy;
 import org.scriptorium.core.domain.Copy.CopyStatus;
 import org.scriptorium.core.domain.Copy.MediaType;
-import org.scriptorium.core.domain.Book;
 import org.scriptorium.core.exceptions.DataAccessException;
 
 import java.sql.*;
@@ -205,9 +204,8 @@ public class JdbcCopyRepository implements CopyRepository {
         CopyStatus status = CopyStatus.valueOf(rs.getString("status"));
 
         // For now, we only handle BOOK media type. Extend this logic for other types.
-        Book book = null;
         if (mediaType == MediaType.BOOK) {
-            book = bookRepository.findById(itemId)
+            bookRepository.findById(itemId)
                     .orElseThrow(() -> new DataAccessException("Associated book with ID " + itemId + " not found for copy " + id));
         }
 

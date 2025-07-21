@@ -1,7 +1,6 @@
 package org.scriptorium.cli.commands.loan;
 
 import org.scriptorium.core.domain.Loan;
-import org.scriptorium.core.services.BookService;
 import org.scriptorium.core.services.LoanService;
 import org.scriptorium.core.services.UserService;
 import org.scriptorium.core.services.CopyService; // New
