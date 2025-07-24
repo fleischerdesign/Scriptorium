@@ -1,0 +1,14 @@
+
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug (Launch) - Main",
+            "request": "launch",
+            "mainClass": "org.scriptorium.application.Main",
+            "projectName": "app",
+            "console": "integratedTerminal"
+        }
+    ]
+}
