@@ -26,3 +26,7 @@ hs_err_pid*.log
 
 # ignore compilations
 app/bin/
+
+# Ignore server logs
+server.log
+server.err

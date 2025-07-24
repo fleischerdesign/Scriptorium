@@ -13,7 +13,9 @@ import org.scriptorium.api.controllers.CopyController;
 import org.scriptorium.api.controllers.LoanController;
 import org.scriptorium.api.controllers.ReservationController;
 import org.scriptorium.config.ConfigLoader;
-import org.scriptorium.cli.commands.ServeCommand;
+import org.scriptorium.cli.commands.server.ServerStartCommand;
+import org.scriptorium.cli.commands.server.ServerStopCommand;
+import org.scriptorium.cli.commands.ServerCommand;
 import org.scriptorium.cli.commands.author.AuthorCommand;
 import org.scriptorium.cli.commands.author.AuthorCreateCommand;
 import org.scriptorium.cli.commands.author.AuthorDeleteCommand;
@@ -348,8 +350,14 @@ public class DependencyFactory implements CommandLine.IFactory {
         if (cls.isAssignableFrom(CopyDeleteCommand.class)) {
             return (K) new CopyDeleteCommand(copyService);
         }
-        if (cls.isAssignableFrom(ServeCommand.class)) {
-            return (K) new ServeCommand(this);
+        if (cls.isAssignableFrom(ServerCommand.class)) {
+            return (K) new ServerCommand();
+        }
+        if (cls.isAssignableFrom(org.scriptorium.cli.commands.server.ServerStartCommand.class)) {
+            return (K) new org.scriptorium.cli.commands.server.ServerStartCommand();
+        }
+        if (cls.isAssignableFrom(org.scriptorium.cli.commands.server.ServerStopCommand.class)) {
+            return (K) new org.scriptorium.cli.commands.server.ServerStopCommand();
         }
 
         // For commands with no dependencies, or for Picocli's internal classes,

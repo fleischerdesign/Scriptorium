@@ -1,7 +1,7 @@
 package org.scriptorium.cli;
 
-import org.scriptorium.cli.commands.ServeCommand;
 import org.scriptorium.cli.commands.ExitCommand;
+import org.scriptorium.cli.commands.ServerCommand;
 import org.scriptorium.cli.commands.author.AuthorCommand;
 import org.scriptorium.cli.commands.book.BookCommand;
 import org.scriptorium.cli.commands.genre.GenreCommand;
@@ -29,7 +29,7 @@ import picocli.CommandLine.HelpCommand;
         LoanCommand.class,
         ReservationCommand.class,
         CopyCommand.class, // New
-        ServeCommand.class,
+        ServerCommand.class,
         HelpCommand.class
 })
 public class ScriptoriumCommand {
