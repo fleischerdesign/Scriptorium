@@ -1,10 +1,8 @@
-package org.scriptorium.cli.commands;
+package org.scriptorium.cli.commands.server;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.ParentCommand;
 import org.scriptorium.cli.ScriptoriumCommand;
-import org.scriptorium.cli.commands.server.ServerStartCommand;
-import org.scriptorium.cli.commands.server.ServerStopCommand;
 
 /**
  * Parent command for all server-related operations (start, stop).
