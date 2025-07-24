@@ -46,7 +46,7 @@ public class GenreCreateCommand implements Callable<Integer> {
     public Integer call() throws Exception {
         try {
             Genre newGenre = new Genre(name);
-            Genre createdGenre = genreService.createGenre(newGenre);
+            Genre createdGenre = genreService.save(newGenre);
 
             System.out.println("Genre created successfully:");
             System.out.println("ID: " + createdGenre.getId());

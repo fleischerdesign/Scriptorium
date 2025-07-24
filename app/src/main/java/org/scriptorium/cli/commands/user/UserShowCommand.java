@@ -28,7 +28,7 @@ public class UserShowCommand implements Runnable {
         }
 
         try {
-            Optional<User> userOptional = userService.findUserById(userId);
+            Optional<User> userOptional = userService.findById(userId);
 
             if (userOptional.isPresent()) {
                 System.out.println("User details:");

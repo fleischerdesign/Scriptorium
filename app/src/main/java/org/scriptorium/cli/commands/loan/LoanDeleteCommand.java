@@ -44,12 +44,12 @@ public class LoanDeleteCommand implements Callable<Integer> {
     public Integer call() throws Exception {
         try {
             // Check if the loan exists before attempting to delete
-            if (loanService.findLoanById(id).isEmpty()) {
+            if (loanService.findById(id).isEmpty()) {
                 System.out.println("Loan with ID " + id + " not found. No deletion performed.");
                 return 1;
             }
 
-            loanService.deleteLoan(id);
+            loanService.deleteById(id);
             System.out.println("Loan with ID " + id + " deleted successfully.");
             return 0;
         } catch (DataAccessException e) {

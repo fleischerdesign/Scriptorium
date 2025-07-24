@@ -10,30 +10,7 @@ import java.util.Optional;
  * Defines the standard CRUD operations for loans, and additional methods
  * for finding loans by user, book, or status.
  */
-public interface LoanRepository {
-
-    /**
-     * Saves a new loan or updates an existing one.
-     *
-     * @param loan The loan to save.
-     * @return The saved loan, typically with the generated ID.
-     */
-    Loan save(Loan loan);
-
-    /**
-     * Finds a loan by its ID.
-     *
-     * @param id The ID of the loan to find.
-     * @return An Optional containing the loan if found, or empty if not.
-     */
-    Optional<Loan> findById(Long id);
-
-    /**
-     * Retrieves all loans.
-     *
-     * @return A list of all loans.
-     */
-    List<Loan> findAll();
+public interface LoanRepository extends BaseRepository<Loan, Long> {
 
     /**
      * Finds all loans associated with a specific user ID.
@@ -50,11 +27,4 @@ public interface LoanRepository {
      * @return A list of loans for the given copy.
      */
     List<Loan> findByCopyId(Long copyId);
-
-    /**
-     * Deletes a loan by its ID.
-     *
-     * @param id The ID of the loan to delete.
-     */
-    void deleteById(Long id);
 }

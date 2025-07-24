@@ -1,15 +1,13 @@
 package org.scriptorium.api.controllers;
 
-import io.javalin.http.Context;
+import org.scriptorium.core.domain.Book;
 import org.scriptorium.core.services.BookService;
 
 /**
  * Controller for handling book-related API requests.
  * This class exposes endpoints for retrieving book data.
  */
-public class BookController {
-
-    private final BookService bookService;
+public class BookController extends CrudController<Book, Long, BookService> {
 
     /**
      * Constructs a BookController with the necessary BookService.
@@ -17,15 +15,16 @@ public class BookController {
      * @param bookService The service for book operations.
      */
     public BookController(BookService bookService) {
-        this.bookService = bookService;
+        super(bookService);
     }
 
-    /**
-     * Handles the GET /api/books request.
-     * Retrieves all books using the BookService and returns them as JSON.
-     * @param ctx The Javalin Context object for handling the request and response.
-     */
-    public void getAll(Context ctx) {
-        ctx.json(bookService.findAllBooks());
+    @Override
+    protected String getPathPrefix() {
+        return "/api/books";
+    }
+
+    @Override
+    protected String getEntityName() {
+        return "Book";
     }
 }

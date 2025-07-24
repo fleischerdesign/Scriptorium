@@ -83,11 +83,11 @@ public class BookCreateCommand implements Callable<Integer> {
             newBook.setMainPublisher(new Publisher(publisherName));
             // Handle Genre: Find existing or create new one
             Genre bookGenre = genreService.findGenreByName(genre)
-                                        .orElseGet(() -> genreService.createGenre(new Genre(genre)));
+                                        .orElseGet(() -> genreService.save(new Genre(genre)));
             newBook.setGenre(bookGenre);
             newBook.setDescription(""); // Default description
 
-            Book createdBook = bookService.createBook(newBook);
+            Book createdBook = bookService.save(newBook);
 
             System.out.println("Book created successfully:");
             System.out.println("ID: " + createdBook.getId());

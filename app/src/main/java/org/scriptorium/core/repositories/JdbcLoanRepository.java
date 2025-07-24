@@ -92,23 +92,22 @@ public class JdbcLoanRepository implements LoanRepository {
 
     @Override
     public Loan save(Loan loan) {
-        if (loan.getId() == null) {
-            return insert(loan);
+        String sql;
+        boolean isNew = (loan.getId() == null);
+        if (isNew) {
+            sql = "INSERT INTO loans(copy_id, user_id, loanDate, dueDate, returnDate) VALUES(?,?,?,?,?)";
         } else {
-            return update(loan);
+            sql = "UPDATE loans SET copy_id = ?, user_id = ?, loanDate = ?, dueDate = ?, returnDate = ? WHERE id = ?";
         }
-    }
 
-    private Loan insert(Loan loan) {
-        String sql = "INSERT INTO loans(copy_id, user_id, loanDate, dueDate, returnDate) VALUES(?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(dbUrl);
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql, isNew ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
 
             if (loan.getCopy() == null || loan.getCopy().getId() == null) {
-                throw new IllegalArgumentException("Copy must not be null and must have an ID for loan insertion.");
+                throw new IllegalArgumentException("Copy must not be null and must have an ID for loan operation.");
             }
             if (loan.getUser() == null || loan.getUser().getId() == null) {
-                throw new IllegalArgumentException("User must not be null and must have an ID for loan insertion.");
+                throw new IllegalArgumentException("User must not be null and must have an ID for loan operation.");
             }
 
             pstmt.setLong(1, loan.getCopy().getId());
@@ -116,51 +115,30 @@ public class JdbcLoanRepository implements LoanRepository {
             pstmt.setString(3, loan.getLoanDate().toString());
             pstmt.setString(4, loan.getDueDate().toString());
             pstmt.setString(5, loan.getReturnDate() != null ? loan.getReturnDate().toString() : null);
+
+            if (!isNew) {
+                pstmt.setLong(6, loan.getId());
+            }
 
             int affectedRows = pstmt.executeUpdate();
 
             if (affectedRows == 0) {
-                throw new SQLException("Creating loan failed, no rows affected.");
+                throw new SQLException("Saving loan failed, no rows affected.");
             }
 
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    loan.setId(generatedKeys.getLong(1));
-                    return loan;
-                } else {
-                    throw new SQLException("Creating loan failed, no ID obtained.");
+            if (isNew) {
+                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        loan.setId(generatedKeys.getLong(1));
+                        return loan;
+                    } else {
+                        throw new SQLException("Creating loan failed, no ID obtained.");
+                    }
                 }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException("Error saving new loan: " + e.getMessage(), e);
-        }
-    }
-
-    private Loan update(Loan loan) {
-        String sql = "UPDATE loans SET copy_id = ?, user_id = ?, loanDate = ?, dueDate = ?, returnDate = ? WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(dbUrl);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            if (loan.getCopy() == null || loan.getCopy().getId() == null) {
-                throw new IllegalArgumentException("Copy must not be null and must have an ID for loan update.");
-            }
-            if (loan.getUser() == null || loan.getUser().getId() == null) {
-                throw new IllegalArgumentException("User must not be null and must have an ID for loan update.");
-            }
-            if (loan.getId() == null) {
-                throw new IllegalArgumentException("Loan ID must not be null for update operation.");
-            }
-
-            pstmt.setLong(1, loan.getCopy().getId());
-            pstmt.setLong(2, loan.getUser().getId());
-            pstmt.setString(3, loan.getLoanDate().toString());
-            pstmt.setString(4, loan.getDueDate().toString());
-            pstmt.setString(5, loan.getReturnDate() != null ? loan.getReturnDate().toString() : null);
-            pstmt.setLong(6, loan.getId());
-            pstmt.executeUpdate();
             return loan;
         } catch (SQLException e) {
-            throw new DataAccessException("Error updating loan: " + e.getMessage(), e);
+            throw new DataAccessException("Error saving loan: " + e.getMessage(), e);
         }
     }
 

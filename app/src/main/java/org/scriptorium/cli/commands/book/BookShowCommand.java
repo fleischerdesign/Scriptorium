@@ -46,7 +46,7 @@ public class BookShowCommand implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            Optional<Book> bookOptional = bookService.findBookById(id);
+            Optional<Book> bookOptional = bookService.findById(id);
 
             if (bookOptional.isPresent()) {
                 Book book = bookOptional.get();

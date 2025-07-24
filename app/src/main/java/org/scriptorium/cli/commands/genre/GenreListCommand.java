@@ -42,7 +42,7 @@ public class GenreListCommand implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            List<Genre> genres = genreService.findAllGenres();
+            List<Genre> genres = genreService.findAll();
 
             if (genres.isEmpty()) {
                 System.out.println("No genres found in the system.");

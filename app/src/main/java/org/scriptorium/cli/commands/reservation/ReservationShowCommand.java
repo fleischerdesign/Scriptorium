@@ -46,7 +46,7 @@ public class ReservationShowCommand implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            Optional<Reservation> reservationOptional = reservationService.findReservationById(id);
+            Optional<Reservation> reservationOptional = reservationService.findById(id);
 
             if (reservationOptional.isPresent()) {
                 Reservation reservation = reservationOptional.get();

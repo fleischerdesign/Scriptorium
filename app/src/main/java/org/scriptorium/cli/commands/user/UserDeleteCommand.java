@@ -25,7 +25,11 @@ public class UserDeleteCommand implements Runnable {
         }
 
         try {
-            userService.deleteUser(userId);
+            if (userService.findById(userId).isEmpty()) {
+                System.out.println("User with ID " + userId + " not found. No deletion performed.");
+                return;
+            }
+            userService.deleteById(userId);
             System.out.println("User with ID " + userId + " deleted successfully.");
         } catch (DataAccessException e) {
             System.err.println("Database error: " + e.getMessage());

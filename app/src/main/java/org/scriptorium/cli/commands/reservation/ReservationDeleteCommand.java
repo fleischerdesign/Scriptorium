@@ -44,12 +44,12 @@ public class ReservationDeleteCommand implements Callable<Integer> {
     public Integer call() throws Exception {
         try {
             // Check if the reservation exists before attempting to delete
-            if (reservationService.findReservationById(id).isEmpty()) {
+            if (reservationService.findById(id).isEmpty()) {
                 System.out.println("Reservation with ID " + id + " not found. No deletion performed.");
                 return 1;
             }
 
-            reservationService.deleteReservation(id);
+            reservationService.deleteById(id);
             System.out.println("Reservation with ID " + id + " deleted successfully.");
             return 0;
         } catch (DataAccessException e) {

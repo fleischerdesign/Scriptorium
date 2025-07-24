@@ -11,22 +11,7 @@ import java.util.Optional;
  * A repository interface for Copy entities.
  * It defines the standard operations to be performed on Copy objects.
  */
-public interface CopyRepository {
-
-    /**
-     * Retrieves a copy by its ID.
-     *
-     * @param id The ID of the copy to retrieve.
-     * @return An Optional containing the copy if found, or an empty Optional otherwise.
-     */
-    Optional<Copy> findById(Long id);
-
-    /**
-     * Retrieves all copies.
-     *
-     * @return A list of all copies.
-     */
-    List<Copy> findAll();
+public interface CopyRepository extends BaseRepository<Copy, Long> {
 
     /**
      * Finds copies by the ID of the associated media item and its type.
@@ -46,20 +31,4 @@ public interface CopyRepository {
      * @return A list of copies associated with the given item ID, media type, and status.
      */
     List<Copy> findByItemIdAndMediaTypeAndStatus(Long itemId, MediaType mediaType, CopyStatus status);
-
-    /**
-     * Saves a given copy. Use the returned instance for further operations
-     * as the save operation might have changed the copy instance (e.g., set an ID).
-     *
-     * @param copy The copy to save.
-     * @return The saved copy.
-     */
-    Copy save(Copy copy);
-
-    /**
-     * Deletes a copy by its ID.
-     *
-     * @param id The ID of the copy to delete.
-     */
-    void deleteById(Long id);
 }

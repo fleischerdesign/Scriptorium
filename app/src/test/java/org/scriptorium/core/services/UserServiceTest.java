@@ -72,7 +72,7 @@ public class UserServiceTest {
         user.setId(1L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        Optional<User> foundUser = userService.findUserById(1L);
+        Optional<User> foundUser = userService.findById(1L);
 
         assertTrue(foundUser.isPresent());
         assertEquals(1L, foundUser.get().getId());
@@ -83,7 +83,7 @@ public class UserServiceTest {
     void testFindUserByIdNotFound() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        Optional<User> foundUser = userService.findUserById(99L);
+        Optional<User> foundUser = userService.findById(99L);
 
         assertFalse(foundUser.isPresent());
         verify(userRepository, times(1)).findById(99L);
@@ -96,7 +96,7 @@ public class UserServiceTest {
         List<User> userList = Arrays.asList(user1, user2);
         when(userRepository.findAll()).thenReturn(userList);
 
-        List<User> foundUsers = userService.findAllUsers();
+        List<User> foundUsers = userService.findAll();
 
         assertFalse(foundUsers.isEmpty());
         assertEquals(2, foundUsers.size());
@@ -132,7 +132,7 @@ public class UserServiceTest {
     void testDeleteUser() {
         doNothing().when(userRepository).deleteById(1L);
 
-        userService.deleteUser(1L);
+        userService.deleteById(1L);
 
         verify(userRepository, times(1)).deleteById(1L);
     }

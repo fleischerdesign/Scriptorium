@@ -44,12 +44,12 @@ public class AuthorDeleteCommand implements Callable<Integer> {
     public Integer call() throws Exception {
         try {
             // Check if the author exists before attempting to delete
-            if (authorService.findAuthorById(id).isEmpty()) {
+            if (authorService.findById(id).isEmpty()) {
                 System.out.println("Author with ID " + id + " not found. No deletion performed.");
                 return 1;
             }
 
-            authorService.deleteAuthor(id);
+            authorService.deleteById(id);
             System.out.println("Author with ID " + id + " deleted successfully.");
             return 0;
         } catch (DataAccessException e) {

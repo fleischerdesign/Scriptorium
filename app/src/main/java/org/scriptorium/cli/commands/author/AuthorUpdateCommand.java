@@ -49,7 +49,7 @@ public class AuthorUpdateCommand implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            Optional<Author> existingAuthorOptional = authorService.findAuthorById(id);
+            Optional<Author> existingAuthorOptional = authorService.findById(id);
 
             if (existingAuthorOptional.isEmpty()) {
                 System.out.println("Author with ID " + id + " not found. Cannot update.");
@@ -59,7 +59,7 @@ public class AuthorUpdateCommand implements Callable<Integer> {
             Author existingAuthor = existingAuthorOptional.get();
             existingAuthor.setName(newName);
 
-            Author updatedAuthor = authorService.updateAuthor(existingAuthor);
+            Author updatedAuthor = authorService.save(existingAuthor);
 
             System.out.println("Author updated successfully:");
             System.out.println("ID: " + updatedAuthor.getId());

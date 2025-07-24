@@ -44,12 +44,12 @@ public class GenreDeleteCommand implements Callable<Integer> {
     public Integer call() throws Exception {
         try {
             // Check if the genre exists before attempting to delete
-            if (genreService.findGenreById(id).isEmpty()) {
+            if (genreService.findById(id).isEmpty()) {
                 System.out.println("Genre with ID " + id + " not found. No deletion performed.");
                 return 1;
             }
 
-            genreService.deleteGenre(id);
+            genreService.deleteById(id);
             System.out.println("Genre with ID " + id + " deleted successfully.");
             return 0;
         } catch (DataAccessException e) {

@@ -59,7 +59,7 @@ public class LoanListCommand implements Callable<Integer> {
             } else if (copyId != null) {
                 loans = loanService.findLoansByCopyId(copyId);
             } else {
-                loans = loanService.findAllLoans();
+                loans = loanService.findAll();
             }
 
             if (loans.isEmpty()) {

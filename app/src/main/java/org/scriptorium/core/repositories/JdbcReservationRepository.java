@@ -93,75 +93,53 @@ public class JdbcReservationRepository implements ReservationRepository {
 
     @Override
     public Reservation save(Reservation reservation) {
-        if (reservation.getId() == null) {
-            return insert(reservation);
+        String sql;
+        boolean isNew = (reservation.getId() == null);
+        if (isNew) {
+            sql = "INSERT INTO reservations(book_id, user_id, reservationDate, status) VALUES(?,?,?,?)";
         } else {
-            return update(reservation);
+            sql = "UPDATE reservations SET book_id = ?, user_id = ?, reservationDate = ?, status = ? WHERE id = ?";
         }
-    }
 
-    private Reservation insert(Reservation reservation) {
-        String sql = "INSERT INTO reservations(book_id, user_id, reservationDate, status) VALUES(?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(dbUrl);
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql, isNew ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
 
             if (reservation.getBook() == null || reservation.getBook().getId() == null) {
-                throw new IllegalArgumentException("Book must not be null and must have an ID for reservation insertion.");
+                throw new IllegalArgumentException("Book must not be null and must have an ID for reservation operation.");
             }
             if (reservation.getUser() == null || reservation.getUser().getId() == null) {
-                throw new IllegalArgumentException("User must not be null and must have an ID for reservation insertion.");
-            }
-
-            pstmt.setLong(1, reservation.getBook().getId());
-            pstmt.setLong(2, reservation.getUser().getId());
-            pstmt.setString(3, reservation.getReservationDate().toString());
-            pstmt.setString(4, reservation.getStatus().name()); // Assuming ReservationStatus is an enum
-
-            int affectedRows = pstmt.executeUpdate();
-
-            if (affectedRows == 0) {
-                throw new SQLException("Creating reservation failed, no rows affected.");
-            }
-
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    reservation.setId(generatedKeys.getLong(1));
-                    return reservation;
-                } else {
-                    throw new SQLException("Creating reservation failed, no ID obtained.");
-                }
-            }
-        }
-        catch (SQLException e) {
-            throw new DataAccessException("Error saving new reservation: " + e.getMessage(), e);
-        }
-    }
-
-    private Reservation update(Reservation reservation) {
-        String sql = "UPDATE reservations SET book_id = ?, user_id = ?, reservationDate = ?, status = ? WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(dbUrl);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            if (reservation.getBook() == null || reservation.getBook().getId() == null) {
-                throw new IllegalArgumentException("Book must not be null and must have an ID for reservation update.");
-            }
-            if (reservation.getUser() == null || reservation.getUser().getId() == null) {
-                throw new IllegalArgumentException("User must not be null and must have an ID for reservation update.");
-            }
-            if (reservation.getId() == null) {
-                throw new IllegalArgumentException("Reservation ID must not be null for update operation.");
+                throw new IllegalArgumentException("User must not be null and must have an ID for reservation operation.");
             }
 
             pstmt.setLong(1, reservation.getBook().getId());
             pstmt.setLong(2, reservation.getUser().getId());
             pstmt.setString(3, reservation.getReservationDate().toString());
             pstmt.setString(4, reservation.getStatus().name());
-            pstmt.setLong(5, reservation.getId());
-            pstmt.executeUpdate();
+
+            if (!isNew) {
+                pstmt.setLong(5, reservation.getId());
+            }
+
+            int affectedRows = pstmt.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Saving reservation failed, no rows affected.");
+            }
+
+            if (isNew) {
+                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        reservation.setId(generatedKeys.getLong(1));
+                        return reservation;
+                    } else {
+                        throw new SQLException("Creating reservation failed, no ID obtained.");
+                    }
+                }
+            }
             return reservation;
         }
         catch (SQLException e) {
-            throw new DataAccessException("Error updating reservation: " + e.getMessage(), e);
+            throw new DataAccessException("Error saving reservation: " + e.getMessage(), e);
         }
     }
 

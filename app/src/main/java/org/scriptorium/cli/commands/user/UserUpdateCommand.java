@@ -50,7 +50,7 @@ public class UserUpdateCommand implements Runnable {
             return;
         }
 
-        Optional<User> userOptional = userService.findUserById(userId);
+        Optional<User> userOptional = userService.findById(userId);
         if (userOptional.isEmpty()) {
             System.out.println("User with ID " + userId + " not found.");
             return;
@@ -82,7 +82,7 @@ public class UserUpdateCommand implements Runnable {
         }
 
         try {
-            User updatedUser = userService.updateUser(userToUpdate);
+            User updatedUser = userService.save(userToUpdate);
             System.out.println("User updated successfully: " + updatedUser);
         } catch (DuplicateEmailException e) {
             System.err.println("Error: " + e.getMessage());

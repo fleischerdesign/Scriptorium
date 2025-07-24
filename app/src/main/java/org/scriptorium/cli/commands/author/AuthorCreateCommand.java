@@ -46,7 +46,7 @@ public class AuthorCreateCommand implements Callable<Integer> {
     public Integer call() throws Exception {
         try {
             Author newAuthor = new Author(name);
-            Author createdAuthor = authorService.createAuthor(newAuthor);
+            Author createdAuthor = authorService.save(newAuthor);
 
             System.out.println("Author created successfully:");
             System.out.println("ID: " + createdAuthor.getId());

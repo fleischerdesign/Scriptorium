@@ -1,15 +1,13 @@
 package org.scriptorium.api.controllers;
 
-import io.javalin.http.Context;
+import org.scriptorium.core.domain.Reservation;
 import org.scriptorium.core.services.ReservationService;
 
 /**
  * Controller for handling reservation-related API requests.
  * This class exposes endpoints for retrieving reservation data.
  */
-public class ReservationController {
-
-    private final ReservationService reservationService;
+public class ReservationController extends CrudController<Reservation, Long, ReservationService> {
 
     /**
      * Constructs a ReservationController with the necessary ReservationService.
@@ -17,30 +15,16 @@ public class ReservationController {
      * @param reservationService The service for reservation operations.
      */
     public ReservationController(ReservationService reservationService) {
-        this.reservationService = reservationService;
+        super(reservationService);
     }
 
-    /**
-     * Handles the GET /api/reservations request.
-     * Retrieves all reservations using the ReservationService and returns them as JSON.
-     * @param ctx The Javalin Context object for handling the request and response.
-     */
-    public void getAll(Context ctx) {
-        ctx.json(reservationService.findAllReservations());
+    @Override
+    protected String getPathPrefix() {
+        return "/api/reservations";
     }
 
-    /**
-     * Handles the GET /api/reservations/{id} request.
-     * Retrieves a single reservation by ID using the ReservationService and returns it as JSON.
-     * If the reservation is not found, it returns a 404 status.
-     * @param ctx The Javalin Context object for handling the request and response.
-     */
-    public void getOne(Context ctx) {
-        Long reservationId = Long.parseLong(ctx.pathParam("id"));
-        reservationService.findReservationById(reservationId)
-                .ifPresentOrElse(
-                        ctx::json,
-                        () -> ctx.status(404).result("Reservation not found")
-                );
+    @Override
+    protected String getEntityName() {
+        return "Reservation";
     }
 }

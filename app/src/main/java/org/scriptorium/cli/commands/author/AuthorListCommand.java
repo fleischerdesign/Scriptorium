@@ -42,7 +42,7 @@ public class AuthorListCommand implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            List<Author> authors = authorService.findAllAuthors();
+            List<Author> authors = authorService.findAll();
 
             if (authors.isEmpty()) {
                 System.out.println("No authors found in the system.");

@@ -17,7 +17,7 @@ public class UserListCommand implements Runnable {
 
     @Override
     public void run() {
-        List<User> users = userService.findAllUsers();
+        List<User> users = userService.findAll();
         if (users.isEmpty()) {
             System.out.println("No users found.");
             return;

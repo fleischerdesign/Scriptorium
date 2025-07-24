@@ -1,5 +1,8 @@
 package org.scriptorium.core.factories;
 
+import org.scriptorium.api.controllers.CrudController;
+import java.util.ArrayList;
+import java.util.List;
 import org.scriptorium.api.ApiServer;
 import org.scriptorium.api.controllers.BookController;
 import org.scriptorium.api.controllers.AuthorController;
@@ -175,15 +178,16 @@ public class DependencyFactory implements CommandLine.IFactory {
      */
     public ApiServer createApiServer() {
         ApiServer server = new ApiServer();
-        BookController bookController = new BookController(bookService);
-        AuthorController authorController = new AuthorController(authorService);
-        UserController userController = new UserController(userService);
-        PublisherController publisherController = new PublisherController(publisherService);
-        GenreController genreController = new GenreController(genreService);
-        CopyController copyController = new CopyController(copyService);
-        LoanController loanController = new LoanController(loanService);
-        ReservationController reservationController = new ReservationController(reservationService);
-        server.defineRoutes(bookController, authorController, userController, publisherController, genreController, copyController, loanController, reservationController);
+        List<CrudController<?, ?, ?>> controllers = new ArrayList<>();
+        controllers.add(new BookController(bookService));
+        controllers.add(new AuthorController(authorService));
+        controllers.add(new UserController(userService));
+        controllers.add(new PublisherController(publisherService));
+        controllers.add(new GenreController(genreService));
+        controllers.add(new CopyController(copyService));
+        controllers.add(new LoanController(loanService));
+        controllers.add(new ReservationController(reservationService));
+        server.defineRoutes(controllers);
         return server;
     }
 

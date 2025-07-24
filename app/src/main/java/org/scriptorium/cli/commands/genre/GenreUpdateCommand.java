@@ -49,7 +49,7 @@ public class GenreUpdateCommand implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            Optional<Genre> existingGenreOptional = genreService.findGenreById(id);
+            Optional<Genre> existingGenreOptional = genreService.findById(id);
 
             if (existingGenreOptional.isEmpty()) {
                 System.out.println("Genre with ID " + id + " not found. Cannot update.");
@@ -59,7 +59,7 @@ public class GenreUpdateCommand implements Callable<Integer> {
             Genre existingGenre = existingGenreOptional.get();
             existingGenre.setName(newName);
 
-            Genre updatedGenre = genreService.updateGenre(existingGenre);
+            Genre updatedGenre = genreService.save(existingGenre);
 
             System.out.println("Genre updated successfully:");
             System.out.println("ID: " + updatedGenre.getId());

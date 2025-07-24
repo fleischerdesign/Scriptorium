@@ -46,7 +46,7 @@ public class LoanShowCommand implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            Optional<Loan> loanOptional = loanService.findLoanById(id);
+            Optional<Loan> loanOptional = loanService.findById(id);
 
             if (loanOptional.isPresent()) {
                 Loan loan = loanOptional.get();

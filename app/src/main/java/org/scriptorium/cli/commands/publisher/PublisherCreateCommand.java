@@ -42,7 +42,7 @@ public class PublisherCreateCommand implements Callable<Integer> {
     public Integer call() throws Exception {
         try {
             Publisher newPublisher = new Publisher(name);
-            Publisher createdPublisher = publisherService.createPublisher(newPublisher);
+            Publisher createdPublisher = publisherService.save(newPublisher);
 
             System.out.println("Publisher created successfully:");
             System.out.println("ID: " + createdPublisher.getId());

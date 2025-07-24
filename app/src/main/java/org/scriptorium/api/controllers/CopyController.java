@@ -1,15 +1,13 @@
 package org.scriptorium.api.controllers;
 
-import io.javalin.http.Context;
+import org.scriptorium.core.domain.Copy;
 import org.scriptorium.core.services.CopyService;
 
 /**
  * Controller for handling copy-related API requests.
  * This class exposes endpoints for retrieving copy data.
  */
-public class CopyController {
-
-    private final CopyService copyService;
+public class CopyController extends CrudController<Copy, Long, CopyService> {
 
     /**
      * Constructs a CopyController with the necessary CopyService.
@@ -17,30 +15,16 @@ public class CopyController {
      * @param copyService The service for copy operations.
      */
     public CopyController(CopyService copyService) {
-        this.copyService = copyService;
+        super(copyService);
     }
 
-    /**
-     * Handles the GET /api/copies request.
-     * Retrieves all copies using the CopyService and returns them as JSON.
-     * @param ctx The Javalin Context object for handling the request and response.
-     */
-    public void getAll(Context ctx) {
-        ctx.json(copyService.findAllCopies());
+    @Override
+    protected String getPathPrefix() {
+        return "/api/copies";
     }
 
-    /**
-     * Handles the GET /api/copies/{id} request.
-     * Retrieves a single copy by ID using the CopyService and returns it as JSON.
-     * If the copy is not found, it returns a 404 status.
-     * @param ctx The Javalin Context object for handling the request and response.
-     */
-    public void getOne(Context ctx) {
-        Long copyId = Long.parseLong(ctx.pathParam("id"));
-        copyService.findCopyById(copyId)
-                .ifPresentOrElse(
-                        ctx::json,
-                        () -> ctx.status(404).result("Copy not found")
-                );
+    @Override
+    protected String getEntityName() {
+        return "Copy";
     }
 }

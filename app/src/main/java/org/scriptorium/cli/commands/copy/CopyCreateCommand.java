@@ -52,10 +52,11 @@ public class CopyCreateCommand implements Callable<Integer> {
     public Integer call() throws Exception {
         try {
             // Verify book existence
-            bookService.findBookById(bookId)
+            bookService.findById(bookId)
                     .orElseThrow(() -> new IllegalArgumentException("Book with ID " + bookId + " not found."));
 
-            Copy newCopy = copyService.createCopy(bookId, barcode);
+            Copy newCopy = new Copy(bookId, barcode, Copy.CopyStatus.AVAILABLE, Copy.MediaType.BOOK);
+            Copy createdCopy = copyService.save(newCopy);
 
             System.out.println("Copy created successfully:");
             System.out.println("ID: " + newCopy.getId());

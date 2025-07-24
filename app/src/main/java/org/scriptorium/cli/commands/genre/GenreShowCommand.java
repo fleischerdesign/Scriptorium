@@ -62,7 +62,7 @@ public class GenreShowCommand implements Callable<Integer> {
             }
 
             if (id != null) {
-                genreOptional = genreService.findGenreById(id);
+                genreOptional = genreService.findById(id);
             } else { // name must be not null here due to checks above
                 genreOptional = genreService.findGenreByName(name);
             }

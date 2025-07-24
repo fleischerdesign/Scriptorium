@@ -53,7 +53,7 @@ public class UserCreateCommand implements Runnable {
         newUser.setCountry(country);
 
         try {
-            User createdUser = userService.createUser(newUser);
+            User createdUser = userService.save(newUser);
             System.out.println("User created successfully: " + createdUser);
         } catch (DuplicateEmailException e) {
             System.err.println("Error: " + e.getMessage());

@@ -44,12 +44,12 @@ public class CopyDeleteCommand implements Callable<Integer> {
     public Integer call() throws Exception {
         try {
             // Check if the copy exists before attempting to delete
-            if (copyService.findCopyById(id).isEmpty()) {
+            if (copyService.findById(id).isEmpty()) {
                 System.out.println("Copy with ID " + id + " not found. No deletion performed.");
                 return 1;
             }
 
-            copyService.deleteCopy(id);
+            copyService.deleteById(id);
             System.out.println("Copy with ID " + id + " deleted successfully.");
             return 0;
         } catch (DataAccessException e) {

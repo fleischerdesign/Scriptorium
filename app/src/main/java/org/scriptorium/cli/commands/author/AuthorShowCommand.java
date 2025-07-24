@@ -62,7 +62,7 @@ public class AuthorShowCommand implements Callable<Integer> {
             }
 
             if (id != null) {
-                authorOptional = authorService.findAuthorById(id);
+                authorOptional = authorService.findById(id);
             } else { // name must be not null here due to checks above
                 authorOptional = authorService.findAuthorByName(name);
             }

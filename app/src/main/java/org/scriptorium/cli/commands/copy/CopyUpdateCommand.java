@@ -52,7 +52,7 @@ public class CopyUpdateCommand implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            Optional<Copy> existingCopyOptional = copyService.findCopyById(id);
+            Optional<Copy> existingCopyOptional = copyService.findById(id);
 
             if (existingCopyOptional.isEmpty()) {
                 System.out.println("Copy with ID " + id + " not found. Cannot update.");

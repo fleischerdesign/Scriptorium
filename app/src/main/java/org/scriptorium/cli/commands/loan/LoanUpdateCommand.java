@@ -53,7 +53,7 @@ public class LoanUpdateCommand implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            Optional<Loan> existingLoanOptional = loanService.findLoanById(id);
+            Optional<Loan> existingLoanOptional = loanService.findById(id);
 
             if (existingLoanOptional.isEmpty()) {
                 System.out.println("Loan with ID " + id + " not found. Cannot update.");

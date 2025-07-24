@@ -17,9 +17,8 @@ import java.util.Optional;
  * This class encapsulates the business logic for reservation operations,
  * using the ReservationRepository for data access and interacting with Book and User repositories.
  */
-public class ReservationService {
+public class ReservationService extends BaseService<Reservation, Long> {
 
-    private final ReservationRepository reservationRepository;
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
 
@@ -31,7 +30,7 @@ public class ReservationService {
      * @param userRepository The repository for User entities.
      */
     public ReservationService(ReservationRepository reservationRepository, BookRepository bookRepository, UserRepository userRepository) {
-        this.reservationRepository = reservationRepository;
+        super(reservationRepository);
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
     }
@@ -53,7 +52,7 @@ public class ReservationService {
 
         Reservation newReservation = new Reservation(book, user, LocalDate.now(), Reservation.ReservationStatus.PENDING);
         try {
-            return reservationRepository.save(newReservation);
+            return repository.save(newReservation);
         } catch (DataAccessException e) {
             throw new DataAccessException("Failed to create reservation: " + e.getMessage(), e);
         }
@@ -68,7 +67,7 @@ public class ReservationService {
      * @throws DataAccessException if a data access error occurs.
      */
     public Reservation cancelReservation(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId)
+        Reservation reservation = repository.findById(reservationId)
                 .orElseThrow(() -> new IllegalArgumentException("Reservation with ID " + reservationId + " not found."));
 
         if (reservation.getStatus() == Reservation.ReservationStatus.FULFILLED) {
@@ -77,7 +76,7 @@ public class ReservationService {
 
         reservation.setStatus(Reservation.ReservationStatus.CANCELLED);
         try {
-            return reservationRepository.save(reservation);
+            return repository.save(reservation);
         } catch (DataAccessException e) {
             throw new DataAccessException("Failed to cancel reservation with ID " + reservationId + ": " + e.getMessage(), e);
         }
@@ -92,7 +91,7 @@ public class ReservationService {
      * @throws DataAccessException if a data access error occurs.
      */
     public Reservation fulfillReservation(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId)
+        Reservation reservation = repository.findById(reservationId)
                 .orElseThrow(() -> new IllegalArgumentException("Reservation with ID " + reservationId + " not found."));
 
         if (reservation.getStatus() == Reservation.ReservationStatus.FULFILLED) {
@@ -101,38 +100,9 @@ public class ReservationService {
 
         reservation.setStatus(Reservation.ReservationStatus.FULFILLED);
         try {
-            return reservationRepository.save(reservation);
+            return repository.save(reservation);
         } catch (DataAccessException e) {
             throw new DataAccessException("Failed to fulfill reservation with ID " + reservationId + ": " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Finds a reservation by its ID.
-     *
-     * @param id The ID of the reservation to find.
-     * @return An Optional containing the reservation if found.
-     * @throws DataAccessException if a data access error occurs.
-     */
-    public Optional<Reservation> findReservationById(Long id) {
-        try {
-            return reservationRepository.findById(id);
-        } catch (DataAccessException e) {
-            throw new DataAccessException("Failed to find reservation by ID: " + id + ": " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Retrieves all reservations.
-     *
-     * @return A list of all reservations.
-     * @throws DataAccessException if a data access error occurs.
-     */
-    public List<Reservation> findAllReservations() {
-        try {
-            return reservationRepository.findAll();
-        } catch (DataAccessException e) {
-            throw new DataAccessException("Failed to retrieve all reservations: " + e.getMessage(), e);
         }
     }
 
@@ -147,7 +117,7 @@ public class ReservationService {
         try {
             // Assuming ReservationRepository will have a findByUserId method or similar
             // For now, we'll filter from findAll, but a dedicated repository method is better for performance
-            return reservationRepository.findAll().stream()
+            return repository.findAll().stream()
                     .filter(r -> r.getUser().getId().equals(userId))
                     .toList();
         } catch (DataAccessException e) {
@@ -166,25 +136,11 @@ public class ReservationService {
         try {
             // Assuming ReservationRepository will have a findByBookId method or similar
             // For now, we'll filter from findAll, but a dedicated repository method is better for performance
-            return reservationRepository.findAll().stream()
+            return repository.findAll().stream()
                     .filter(r -> r.getBook().getId().equals(bookId))
                     .toList();
         } catch (DataAccessException e) {
             throw new DataAccessException("Failed to find reservations by book ID " + bookId + ": " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Deletes a reservation by its ID.
-     *
-     * @param id The ID of the reservation to delete.
-     * @throws DataAccessException if a data access error occurs.
-     */
-    public void deleteReservation(Long id) {
-        try {
-            reservationRepository.deleteById(id);
-        } catch (DataAccessException e) {
-            throw new DataAccessException("Failed to delete reservation with ID " + id + ": " + e.getMessage(), e);
         }
     }
 }

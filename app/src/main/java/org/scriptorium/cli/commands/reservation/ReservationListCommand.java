@@ -59,7 +59,7 @@ public class ReservationListCommand implements Callable<Integer> {
             } else if (bookId != null) {
                 reservations = reservationService.findReservationsByBookId(bookId);
             } else {
-                reservations = reservationService.findAllReservations();
+                reservations = reservationService.findAll();
             }
 
             if (reservations.isEmpty()) {

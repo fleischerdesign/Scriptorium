@@ -125,55 +125,48 @@ public class JdbcCopyRepository implements CopyRepository {
     @Override
     public Copy save(Copy copy) {
         if (copy.getId() == null) {
-            return insert(copy);
-        } else {
-            return update(copy);
-        }
-    }
+            String sql = "INSERT INTO copies(item_id, media_type, barcode, status) VALUES(?,?,?,?)";
+            try (Connection conn = DriverManager.getConnection(dbUrl);
+                 PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-    private Copy insert(Copy copy) {
-        String sql = "INSERT INTO copies(item_id, media_type, barcode, status) VALUES(?,?,?,?)";
-        try (Connection conn = DriverManager.getConnection(dbUrl);
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                pstmt.setLong(1, copy.getItemId());
+                pstmt.setString(2, copy.getMediaType().name());
+                pstmt.setString(3, copy.getBarcode());
+                pstmt.setString(4, copy.getStatus().name());
 
-            pstmt.setLong(1, copy.getItemId());
-            pstmt.setString(2, copy.getMediaType().name());
-            pstmt.setString(3, copy.getBarcode());
-            pstmt.setString(4, copy.getStatus().name());
+                int affectedRows = pstmt.executeUpdate();
 
-            int affectedRows = pstmt.executeUpdate();
-
-            if (affectedRows == 0) {
-                throw new SQLException("Creating copy failed, no rows affected.");
-            }
-
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    copy.setId(generatedKeys.getLong(1));
-                    return copy;
-                } else {
-                    throw new SQLException("Creating copy failed, no ID obtained.");
+                if (affectedRows == 0) {
+                    throw new SQLException("Creating copy failed, no rows affected.");
                 }
+
+                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        copy.setId(generatedKeys.getLong(1));
+                        return copy;
+                    } else {
+                        throw new SQLException("Creating copy failed, no ID obtained.");
+                    }
+                }
+            } catch (SQLException e) {
+                throw new DataAccessException("Error saving new copy: " + e.getMessage(), e);
             }
-        } catch (SQLException e) {
-            throw new DataAccessException("Error saving new copy: " + e.getMessage(), e);
-        }
-    }
+        } else {
+            String sql = "UPDATE copies SET item_id = ?, media_type = ?, barcode = ?, status = ? WHERE id = ?";
+            try (Connection conn = DriverManager.getConnection(dbUrl);
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-    private Copy update(Copy copy) {
-        String sql = "UPDATE copies SET item_id = ?, media_type = ?, barcode = ?, status = ? WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(dbUrl);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setLong(1, copy.getItemId());
-            pstmt.setString(2, copy.getMediaType().name());
-            pstmt.setString(3, copy.getBarcode());
-            pstmt.setString(4, copy.getStatus().name());
-            pstmt.setLong(5, copy.getId());
-            pstmt.executeUpdate();
-            return copy;
-        } catch (SQLException e) {
-            throw new DataAccessException("Error updating copy: " + e.getMessage(), e);
+                pstmt.setLong(1, copy.getItemId());
+                pstmt.setString(2, copy.getMediaType().name());
+                pstmt.setString(3, copy.getBarcode());
+                pstmt.setString(4, copy.getStatus().name());
+                pstmt.setLong(5, copy.getId());
+                pstmt.executeUpdate();
+                return copy;
+            }
+            catch (SQLException e) {
+                throw new DataAccessException("Error updating copy: " + e.getMessage(), e);
+            }
         }
     }
 

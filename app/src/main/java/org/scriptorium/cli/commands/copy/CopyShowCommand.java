@@ -50,7 +50,7 @@ public class CopyShowCommand implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            Optional<Copy> copyOptional = copyService.findCopyById(id);
+            Optional<Copy> copyOptional = copyService.findById(id);
 
             if (copyOptional.isPresent()) {
                 Copy copy = copyOptional.get();
@@ -63,7 +63,7 @@ public class CopyShowCommand implements Callable<Integer> {
 
                 // Display associated book details if it's a book copy
                 if (copy.getMediaType() == Copy.MediaType.BOOK) {
-                    bookService.findBookById(copy.getItemId()).ifPresent(book -> {
+                    bookService.findById(copy.getItemId()).ifPresent(book -> {
                         System.out.println("Associated Book Title: " + book.getTitle());
                         System.out.println("Associated Book ISBN: " + (book.getIsbns().isEmpty() ? "N/A" : book.getIsbns().get(0)));
                     });

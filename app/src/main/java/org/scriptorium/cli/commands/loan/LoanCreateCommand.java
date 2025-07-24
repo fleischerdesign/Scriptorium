@@ -70,9 +70,9 @@ public class LoanCreateCommand implements Callable<Integer> {
         try {
             // Optional: Verify book and user existence before creating loan
             // This is already handled by LoanService, but can add more specific messages here if needed
-            copyService.findCopyById(copyId)
+            copyService.findById(copyId)
                     .orElseThrow(() -> new IllegalArgumentException("Copy with ID " + copyId + " not found."));
-            userService.findUserById(userId)
+            userService.findById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("User with ID " + userId + " not found."));
 
             Loan newLoan = loanService.createLoan(copyId, userId, dueDate);

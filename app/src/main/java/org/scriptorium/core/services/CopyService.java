@@ -9,14 +9,13 @@ import org.scriptorium.core.repositories.BookRepository;
 import org.scriptorium.core.repositories.CopyRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Service class for managing book copies.
  * This class encapsulates the business logic for copy operations,
  * using the CopyRepository for data access and interacting with BookRepository.
  */
-public class CopyService {
+public class CopyService extends BaseService<Copy, Long> {
 
     private final CopyRepository copyRepository;
     private final BookRepository bookRepository;
@@ -28,6 +27,7 @@ public class CopyService {
      * @param bookRepository The repository for Book entities.
      */
     public CopyService(CopyRepository copyRepository, BookRepository bookRepository) {
+        super(copyRepository);
         this.copyRepository = copyRepository;
         this.bookRepository = bookRepository;
     }
@@ -47,7 +47,7 @@ public class CopyService {
 
         Copy newCopy = new Copy(book.getId(), barcode, CopyStatus.AVAILABLE, MediaType.BOOK);
         try {
-            return copyRepository.save(newCopy);
+            return repository.save(newCopy);
         } catch (DataAccessException e) {
             throw new DataAccessException("Failed to create copy: " + e.getMessage(), e);
         }
@@ -62,68 +62,15 @@ public class CopyService {
      * @throws IllegalArgumentException if the copy is not found.
      * @throws DataAccessException if a data access error occurs.
      */
-    /**
-     * Saves an existing copy. This method is used for updating copy details.
-     *
-     * @param copy The copy object to save (update).
-     * @return The saved (updated) copy object.
-     * @throws DataAccessException if a data access error occurs.
-     */
-    public Copy save(Copy copy) {
-        try {
-            return copyRepository.save(copy);
-        } catch (DataAccessException e) {
-            throw new DataAccessException("Failed to save copy: " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Updates the status of a copy.
-     *
-     * @param copyId The ID of the copy to update.
-     * @param newStatus The new status for the copy.
-     * @return The updated Copy object.
-     * @throws IllegalArgumentException if the copy is not found.
-     * @throws DataAccessException if a data access error occurs.
-     */
     public Copy updateCopyStatus(Long copyId, CopyStatus newStatus) {
-        Copy copy = copyRepository.findById(copyId)
+        Copy copy = repository.findById(copyId)
                 .orElseThrow(() -> new IllegalArgumentException("Copy with ID " + copyId + " not found."));
 
         copy.setStatus(newStatus);
         try {
-            return copyRepository.save(copy);
+            return repository.save(copy);
         } catch (DataAccessException e) {
             throw new DataAccessException("Failed to update copy status: " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Finds a copy by its ID.
-     *
-     * @param id The ID of the copy to find.
-     * @return An Optional containing the copy if found.
-     * @throws DataAccessException if a data access error occurs.
-     */
-    public Optional<Copy> findCopyById(Long id) {
-        try {
-            return copyRepository.findById(id);
-        } catch (DataAccessException e) {
-            throw new DataAccessException("Failed to find copy by ID: " + id + ": " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Retrieves all copies.
-     *
-     * @return A list of all copies.
-     * @throws DataAccessException if a data access error occurs.
-     */
-    public List<Copy> findAllCopies() {
-        try {
-            return copyRepository.findAll();
-        } catch (DataAccessException e) {
-            throw new DataAccessException("Failed to retrieve all copies: " + e.getMessage(), e);
         }
     }
 
@@ -154,20 +101,6 @@ public class CopyService {
             return copyRepository.findByItemIdAndMediaTypeAndStatus(bookId, MediaType.BOOK, CopyStatus.AVAILABLE);
         } catch (DataAccessException e) {
             throw new DataAccessException("Failed to find available copies by book ID " + bookId + ": " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Deletes a copy by its ID.
-     *
-     * @param id The ID of the copy to delete.
-     * @throws DataAccessException if a data access error occurs.
-     */
-    public void deleteCopy(Long id) {
-        try {
-            copyRepository.deleteById(id);
-        } catch (DataAccessException e) {
-            throw new DataAccessException("Failed to delete copy with ID " + id + ": " + e.getMessage(), e);
         }
     }
 }

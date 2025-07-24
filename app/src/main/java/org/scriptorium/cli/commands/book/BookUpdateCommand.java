@@ -76,7 +76,7 @@ public class BookUpdateCommand implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            Optional<Book> existingBookOptional = bookService.findBookById(id);
+            Optional<Book> existingBookOptional = bookService.findById(id);
 
             if (existingBookOptional.isEmpty()) {
                 System.out.println("Book with ID " + id + " not found. Cannot update.");
@@ -108,11 +108,11 @@ public class BookUpdateCommand implements Callable<Integer> {
             }
             if (genre != null) {
                 Genre bookGenre = genreService.findGenreByName(genre)
-                                            .orElseGet(() -> genreService.createGenre(new Genre(genre)));
+                                            .orElseGet(() -> genreService.save(new Genre(genre)));
                 existingBook.setGenre(bookGenre);
             }
 
-            Book updatedBook = bookService.updateBook(existingBook);
+            Book updatedBook = bookService.save(existingBook);
 
             System.out.println("Book updated successfully:");
             System.out.println("ID: " + updatedBook.getId());

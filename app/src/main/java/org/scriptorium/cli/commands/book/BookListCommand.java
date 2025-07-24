@@ -44,7 +44,7 @@ public class BookListCommand implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            List<Book> books = bookService.findAllBooks();
+            List<Book> books = bookService.findAll();
 
             if (books.isEmpty()) {
                 System.out.println("No books found in the system.");

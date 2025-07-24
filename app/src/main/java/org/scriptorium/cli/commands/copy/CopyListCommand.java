@@ -1,6 +1,7 @@
 package org.scriptorium.cli.commands.copy;
 
 import org.scriptorium.core.domain.Copy;
+import org.scriptorium.core.domain.Copy.MediaType;
 import org.scriptorium.core.services.CopyService;
 import org.scriptorium.core.exceptions.DataAccessException;
 
@@ -51,7 +52,7 @@ public class CopyListCommand implements Callable<Integer> {
             if (bookId != null) {
                 copies = copyService.findCopiesByBookId(bookId);
             } else {
-                copies = copyService.findAllCopies();
+                copies = copyService.findAll();
             }
 
             if (copies.isEmpty()) {

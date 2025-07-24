@@ -10,14 +10,13 @@ import org.scriptorium.core.repositories.UserRepository;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Service class for managing book loans.
  * This class encapsulates the business logic for loan operations,
  * using the LoanRepository for data access and interacting with Copy and User repositories.
  */
-public class LoanService {
+public class LoanService extends BaseService<Loan, Long> {
 
     private final LoanRepository loanRepository;
     private final CopyRepository copyRepository;
@@ -31,6 +30,7 @@ public class LoanService {
      * @param userRepository The repository for User entities.
      */
     public LoanService(LoanRepository loanRepository, CopyRepository copyRepository, UserRepository userRepository) {
+        super(loanRepository);
         this.loanRepository = loanRepository;
         this.copyRepository = copyRepository;
         this.userRepository = userRepository;
@@ -60,7 +60,7 @@ public class LoanService {
         try {
             copy.setStatus(Copy.CopyStatus.ON_LOAN);
             copyRepository.save(copy); // Update copy status
-            return loanRepository.save(newLoan);
+            return repository.save(newLoan); // Use inherited save method
         } catch (DataAccessException e) {
             throw new DataAccessException("Failed to create loan: " + e.getMessage(), e);
         }
@@ -75,7 +75,7 @@ public class LoanService {
      * @throws DataAccessException if a data access error occurs.
      */
     public Loan returnBook(Long loanId) {
-        Loan loan = loanRepository.findById(loanId)
+        Loan loan = repository.findById(loanId) // Use inherited findById method
                 .orElseThrow(() -> new IllegalArgumentException("Loan with ID " + loanId + " not found."));
 
         if (loan.isReturned()) {
@@ -87,53 +87,9 @@ public class LoanService {
             Copy returnedCopy = loan.getCopy();
             returnedCopy.setStatus(Copy.CopyStatus.AVAILABLE);
             copyRepository.save(returnedCopy); // Update copy status
-            return loanRepository.save(loan);
+            return repository.save(loan); // Use inherited save method
         } catch (DataAccessException e) {
-            throw new DataAccessException("Failed to return copy for loan ID " + loanId + ": " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Saves an existing loan. This method is used for updating loan details.
-     *
-     * @param loan The loan object to save (update).
-     * @return The saved (updated) loan object.
-     * @throws DataAccessException if a data access error occurs.
-     */
-    public Loan save(Loan loan) {
-        try {
-            return loanRepository.save(loan);
-        } catch (DataAccessException e) {
-            throw new DataAccessException("Failed to save loan: " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Finds a loan by its ID.
-     *
-     * @param id The ID of the loan to find.
-     * @return An Optional containing the loan if found.
-     * @throws DataAccessException if a data access error occurs.
-     */
-    public Optional<Loan> findLoanById(Long id) {
-        try {
-            return loanRepository.findById(id);
-        } catch (DataAccessException e) {
-            throw new DataAccessException("Failed to find loan by ID: " + id + ": " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Retrieves all loans.
-     *
-     * @return A list of all loans.
-     * @throws DataAccessException if a data access error occurs.
-     */
-    public List<Loan> findAllLoans() {
-        try {
-            return loanRepository.findAll();
-        } catch (DataAccessException e) {
-            throw new DataAccessException("Failed to retrieve all loans: " + e.getMessage(), e);
+            throw new DataAccessException("Failed to return copy for loan ID " + loanId + ": " + e);
         }
     }
 
@@ -164,20 +120,6 @@ public class LoanService {
             return loanRepository.findByCopyId(copyId);
         } catch (DataAccessException e) {
             throw new DataAccessException("Failed to find loans by copy ID " + copyId + ": " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Deletes a loan by its ID.
-     *
-     * @param id The ID of the loan to delete.
-     * @throws DataAccessException if a data access error occurs.
-     */
-    public void deleteLoan(Long id) {
-        try {
-            loanRepository.deleteById(id);
-        } catch (DataAccessException e) {
-            throw new DataAccessException("Failed to delete loan with ID " + id + ": " + e.getMessage(), e);
         }
     }
 }

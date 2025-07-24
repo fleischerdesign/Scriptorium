@@ -218,25 +218,16 @@ public class JdbcBookRepository implements BookRepository {
      */
     @Override
     public Book save(Book book) {
-        if (book.getId() == null) {
-            return insert(book);
+        String sql;
+        boolean isNew = (book.getId() == null);
+        if (isNew) {
+            sql = "INSERT INTO books(title, genre_id, publicationYear, publisher_id, description) VALUES(?,?,?,?,?)";
         } else {
-            return update(book);
+            sql = "UPDATE books SET title = ?, genre_id = ?, publicationYear = ?, publisher_id = ?, description = ? WHERE id = ?";
         }
-    }
 
-    /**
-     * Inserts a new book and its associated authors, publisher, and ISBNs into the database.
-     * It handles the "find or create" logic for authors and publishers.
-     *
-     * @param book The new book to insert.
-     * @return The inserted book with its new database-generated ID.
-     * @throws DataAccessException if the insertion fails.
-     */
-    private Book insert(Book book) {
-        String sql = "INSERT INTO books(title, genre_id, publicationYear, publisher_id, description) VALUES(?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(dbUrl);
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql, isNew ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS)) {
 
             pstmt.setString(1, book.getTitle());
             if (book.getGenre() != null && book.getGenre().getId() != null) {
@@ -268,18 +259,31 @@ public class JdbcBookRepository implements BookRepository {
 
             pstmt.setString(5, book.getDescription());
 
+            if (!isNew) {
+                pstmt.setLong(6, book.getId());
+            }
+
             int affectedRows = pstmt.executeUpdate();
 
             if (affectedRows == 0) {
-                throw new SQLException("Creating book failed, no rows affected.");
+                throw new SQLException("Saving book failed, no rows affected.");
             }
 
-            // Retrieve and set the generated book ID
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    book.setId(generatedKeys.getLong(1));
-                } else {
-                    throw new SQLException("Creating book failed, no ID obtained.");
+            if (isNew) {
+                // Retrieve and set the generated book ID
+                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        book.setId(generatedKeys.getLong(1));
+                    } else {
+                        throw new SQLException("Creating book failed, no ID obtained.");
+                    }
+                }
+            } else {
+                // Simple strategy for relationship update: delete old and insert new.
+                // This is less efficient but easier to implement than diffing collections.
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.executeUpdate("DELETE FROM book_authors WHERE book_id = " + book.getId());
+                    stmt.executeUpdate("DELETE FROM book_isbns WHERE book_id = " + book.getId());
                 }
             }
 
@@ -317,95 +321,7 @@ public class JdbcBookRepository implements BookRepository {
             return book;
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error saving new book: " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Updates an existing book's details and its relationships.
-     * This implementation clears and re-inserts author and ISBN relationships for simplicity.
-     *
-     * @param book The book with updated information.
-     * @return The updated book.
-     * @throws DataAccessException if the update fails.
-     */
-    private Book update(Book book) {
-        String sql = "UPDATE books SET title = ?, genre_id = ?, publicationYear = ?, publisher_id = ?, description = ? WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(dbUrl);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, book.getTitle());
-            if (book.getGenre() != null && book.getGenre().getId() != null) {
-                pstmt.setLong(2, book.getGenre().getId());
-            } else {
-                pstmt.setNull(2, Types.INTEGER);
-            }
-            pstmt.setInt(3, book.getPublicationYear());
-
-            // Handle Publisher: Find existing or save new one
-            Long publisherId = null;
-            if (book.getMainPublisher() != null) {
-                Publisher publisher = book.getMainPublisher();
-                Optional<Publisher> existingPublisher = publisherRepository.findByName(publisher.getName());
-                if (existingPublisher.isPresent()) {
-                    publisherId = existingPublisher.get().getId();
-                } else {
-                    Publisher savedPublisher = publisherRepository.save(publisher);
-                    publisherId = savedPublisher.getId();
-                }
-            }
-            if (publisherId != null) {
-                pstmt.setLong(4, publisherId);
-            } else {
-                pstmt.setNull(4, Types.INTEGER);
-            }
-
-            pstmt.setString(5, book.getDescription());
-            pstmt.setLong(6, book.getId());
-
-            pstmt.executeUpdate();
-
-            // Simple strategy for relationship update: delete old and insert new.
-            // This is less efficient but easier to implement than diffing collections.
-            try (Statement stmt = conn.createStatement()) {
-                stmt.executeUpdate("DELETE FROM book_authors WHERE book_id = " + book.getId());
-                stmt.executeUpdate("DELETE FROM book_isbns WHERE book_id = " + book.getId());
-            }
-
-            // Re-insert Authors using the same "find or create" logic as the insert method
-            String insertBookAuthorSql = "INSERT INTO book_authors(book_id, author_id) VALUES(?,?)";
-            try (PreparedStatement pstmtAuthors = conn.prepareStatement(insertBookAuthorSql)) {
-                for (Author author : book.getAuthors()) {
-                    Long authorId;
-                    Optional<Author> existingAuthor = authorRepository.findByName(author.getName());
-                    if (existingAuthor.isPresent()) {
-                        authorId = existingAuthor.get().getId();
-                    } else {
-                        Author savedAuthor = authorRepository.save(author);
-                        authorId = savedAuthor.getId();
-                    }
-                    pstmtAuthors.setLong(1, book.getId());
-                    pstmtAuthors.setLong(2, authorId);
-                    pstmtAuthors.addBatch();
-                }
-                pstmtAuthors.executeBatch();
-            }
-
-            // Re-insert ISBNs
-            String insertBookIsbnSql = "INSERT INTO book_isbns(book_id, isbn_value) VALUES(?,?)";
-            try (PreparedStatement pstmtIsbns = conn.prepareStatement(insertBookIsbnSql)) {
-                for (String isbn : book.getIsbns()) {
-                    pstmtIsbns.setLong(1, book.getId());
-                    pstmtIsbns.setString(2, isbn);
-                    pstmtIsbns.addBatch();
-                }
-                pstmtIsbns.executeBatch();
-            }
-
-            return book;
-
-        } catch (SQLException e) {
-            throw new DataAccessException("Error updating book: " + e.getMessage(), e);
+            throw new DataAccessException("Error saving book: " + e.getMessage(), e);
         }
     }
 

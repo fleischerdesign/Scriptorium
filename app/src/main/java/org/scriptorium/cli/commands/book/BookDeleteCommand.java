@@ -44,12 +44,12 @@ public class BookDeleteCommand implements Callable<Integer> {
     public Integer call() throws Exception {
         try {
             // Check if the book exists before attempting to delete
-            if (bookService.findBookById(id).isEmpty()) {
+            if (bookService.findById(id).isEmpty()) {
                 System.out.println("Book with ID " + id + " not found. No deletion performed.");
                 return 1;
             }
 
-            bookService.deleteBook(id);
+            bookService.deleteById(id);
             System.out.println("Book with ID " + id + " deleted successfully.");
             return 0;
         } catch (DataAccessException e) {

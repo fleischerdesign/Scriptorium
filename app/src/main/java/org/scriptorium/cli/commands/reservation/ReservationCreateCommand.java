@@ -56,9 +56,9 @@ public class ReservationCreateCommand implements Callable<Integer> {
     public Integer call() throws Exception {
         try {
             // Verify book and user existence before creating reservation
-            bookService.findBookById(bookId)
+            bookService.findById(bookId)
                     .orElseThrow(() -> new IllegalArgumentException("Book with ID " + bookId + " not found."));
-            userService.findUserById(userId)
+            userService.findById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("User with ID " + userId + " not found."));
 
             Reservation newReservation = reservationService.createReservation(bookId, userId);

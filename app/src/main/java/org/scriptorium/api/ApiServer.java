@@ -3,14 +3,9 @@ package org.scriptorium.api;
 
 import io.javalin.Javalin;
 import org.scriptorium.api.config.JacksonJsonMapper;
-import org.scriptorium.api.controllers.BookController;
-import org.scriptorium.api.controllers.AuthorController;
-import org.scriptorium.api.controllers.UserController;
-import org.scriptorium.api.controllers.PublisherController;
-import org.scriptorium.api.controllers.GenreController;
-import org.scriptorium.api.controllers.CopyController;
-import org.scriptorium.api.controllers.LoanController;
-import org.scriptorium.api.controllers.ReservationController;
+import org.scriptorium.api.controllers.CrudController;
+
+import java.util.List;
 
 /**
  * This class sets up and manages the Javalin web server for the Scriptorium API.
@@ -51,33 +46,15 @@ public class ApiServer {
 
     /**
      * Defines and registers all API routes with the Javalin application.
-     * I'm passing in the controllers as arguments to keep the route definition
-     * clean and allow for easy testing and dependency injection.
+     * I'm now passing in a list of CrudController instances, which makes the route
+     * definition much cleaner and more scalable. Each controller is responsible
+     * for registering its own routes.
      *
-     * @param bookController The controller for book-related operations.
-     * @param authorController The controller for author-related operations.
-     * @param userController The controller for user-related operations.
-     * @param publisherController The controller for publisher-related operations.
-     * @param genreController The controller for genre-related operations.
-     * @param copyController The controller for copy-related operations.
-     * @param loanController The controller for loan-related operations.
-     * @param reservationController The controller for reservation-related operations.
+     * @param controllers A list of CrudController instances to register routes from.
      */
-    public void defineRoutes(BookController bookController, AuthorController authorController, UserController userController, PublisherController publisherController, GenreController genreController, CopyController copyController, LoanController loanController, ReservationController reservationController) {
-        app.get("/api/books", bookController::getAll);
-        app.get("/api/authors", authorController::getAll);
-        app.get("/api/authors/{id}", authorController::getOne);
-        app.get("/api/users", userController::getAll);
-        app.get("/api/users/{id}", userController::getOne);
-        app.get("/api/publishers", publisherController::getAll);
-        app.get("/api/publishers/{id}", publisherController::getOne);
-        app.get("/api/genres", genreController::getAll);
-        app.get("/api/genres/{id}", genreController::getOne);
-        app.get("/api/copies", copyController::getAll);
-        app.get("/api/copies/{id}", copyController::getOne);
-        app.get("/api/loans", loanController::getAll);
-        app.get("/api/loans/{id}", loanController::getOne);
-        app.get("/api/reservations", reservationController::getAll);
-        app.get("/api/reservations/{id}", reservationController::getOne);
+    public void defineRoutes(List<? extends CrudController<?, ?, ?>> controllers) {
+        for (CrudController<?, ?, ?> controller : controllers) {
+            controller.registerRoutes(app);
+        }
     }
 }

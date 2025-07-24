@@ -5,7 +5,6 @@ import org.scriptorium.core.repositories.UserRepository;
 import org.scriptorium.core.exceptions.DataAccessException;
 import org.scriptorium.core.exceptions.DuplicateEmailException;
 import org.mindrot.jbcrypt.BCrypt;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -13,7 +12,7 @@ import java.util.Optional;
  * This class encapsulates the business logic for user operations,
  * using a UserRepository for data access.
  */
-public class UserService {
+public class UserService extends BaseService<User, Long> {
 
     private final UserRepository userRepository;
 
@@ -22,6 +21,7 @@ public class UserService {
      * @param userRepository The repository to be used for user data operations.
      */
     public UserService(UserRepository userRepository) {
+        super(userRepository);
         this.userRepository = userRepository;
     }
 
@@ -47,38 +47,11 @@ public class UserService {
             if (user.getPasswordHash() != null && !user.getPasswordHash().isEmpty()) {
                 user.setPasswordHash(hashPassword(user.getPasswordHash()));
             }
-            return userRepository.save(user);
+            return repository.save(user);
         } catch (DuplicateEmailException e) {
             throw new DuplicateEmailException("User with email " + user.getEmail() + " already exists.", e);
         } catch (DataAccessException e) {
             throw new DataAccessException("Failed to create user: " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Finds a user by their ID.
-     *
-     * @param id The ID of the user to find.
-     * @return An Optional containing the user if found.
-     */
-    public Optional<User> findUserById(Long id) {
-        try {
-            return userRepository.findById(id);
-        } catch (DataAccessException e) {
-            throw new DataAccessException("Failed to find user by ID: " + id + ": " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Retrieves all users.
-     *
-     * @return A list of all users.
-     */
-    public List<User> findAllUsers() {
-        try {
-            return userRepository.findAll();
-        } catch (DataAccessException e) {
-            throw new DataAccessException("Failed to retrieve all users: " + e.getMessage(), e);
         }
     }
 
@@ -97,24 +70,11 @@ public class UserService {
             if (user.getPasswordHash() != null && !user.getPasswordHash().isEmpty()) {
                 user.setPasswordHash(hashPassword(user.getPasswordHash()));
             }
-            return userRepository.save(user);
+            return repository.save(user);
         } catch (DuplicateEmailException e) {
             throw new DuplicateEmailException("User with email " + user.getEmail() + " already exists.", e);
         } catch (DataAccessException e) {
             throw new DataAccessException("Failed to update user: " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Deletes a user by their ID.
-     *
-     * @param id The ID of the user to delete.
-     */
-    public void deleteUser(Long id) {
-        try {
-            userRepository.deleteById(id);
-        } catch (DataAccessException e) {
-            throw new DataAccessException("Failed to delete user with ID " + id + ": " + e.getMessage(), e);
         }
     }
 

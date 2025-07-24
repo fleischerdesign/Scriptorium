@@ -42,7 +42,7 @@ public class PublisherListCommand implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            List<Publisher> publishers = publisherService.findAllPublishers();
+            List<Publisher> publishers = publisherService.findAll();
 
             if (publishers.isEmpty()) {
                 System.out.println("No publishers found in the system.");
