@@ -1,6 +1,16 @@
 package org.scriptorium.core.factories;
 
+import org.scriptorium.api.ApiServer;
+import org.scriptorium.api.controllers.BookController;
+import org.scriptorium.api.controllers.AuthorController;
+import org.scriptorium.api.controllers.UserController;
+import org.scriptorium.api.controllers.PublisherController;
+import org.scriptorium.api.controllers.GenreController;
+import org.scriptorium.api.controllers.CopyController;
+import org.scriptorium.api.controllers.LoanController;
+import org.scriptorium.api.controllers.ReservationController;
 import org.scriptorium.config.ConfigLoader;
+import org.scriptorium.cli.commands.ServeCommand;
 import org.scriptorium.cli.commands.author.AuthorCommand;
 import org.scriptorium.cli.commands.author.AuthorCreateCommand;
 import org.scriptorium.cli.commands.author.AuthorDeleteCommand;
@@ -112,6 +122,11 @@ public class DependencyFactory implements CommandLine.IFactory {
     private final CopyRepository copyRepository; // New
     private final CopyService copyService;     // New
 
+    /**
+     * Constructor for DependencyFactory. I'm initializing all my service and repository
+     * instances here. This ensures that all dependencies are set up once and are ready
+     * for injection into commands or the API server.
+     */
     public DependencyFactory() {
         this.configLoader = new ConfigLoader("config.properties");
         String dbUrl = configLoader.getProperty("database.url", "jdbc:sqlite:scriptorium.db");
@@ -150,6 +165,26 @@ public class DependencyFactory implements CommandLine.IFactory {
 
         this.bookFactory = new BookFactory(genreService);
         this.bookImportService = new BookImportService(httpClient, bookFactory, genreService);
+    }
+
+    /**
+     * Creates and configures the ApiServer instance.
+     * This method is responsible for wiring all the necessary controllers
+     * into the ApiServer before returning it.
+     * @return A fully configured ApiServer instance.
+     */
+    public ApiServer createApiServer() {
+        ApiServer server = new ApiServer();
+        BookController bookController = new BookController(bookService);
+        AuthorController authorController = new AuthorController(authorService);
+        UserController userController = new UserController(userService);
+        PublisherController publisherController = new PublisherController(publisherService);
+        GenreController genreController = new GenreController(genreService);
+        CopyController copyController = new CopyController(copyService);
+        LoanController loanController = new LoanController(loanService);
+        ReservationController reservationController = new ReservationController(reservationService);
+        server.defineRoutes(bookController, authorController, userController, publisherController, genreController, copyController, loanController, reservationController);
+        return server;
     }
 
     /**
@@ -308,6 +343,9 @@ public class DependencyFactory implements CommandLine.IFactory {
         }
         if (cls.isAssignableFrom(CopyDeleteCommand.class)) {
             return (K) new CopyDeleteCommand(copyService);
+        }
+        if (cls.isAssignableFrom(ServeCommand.class)) {
+            return (K) new ServeCommand(this);
         }
 
         // For commands with no dependencies, or for Picocli's internal classes,

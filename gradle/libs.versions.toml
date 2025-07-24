@@ -4,7 +4,10 @@
 [versions]
 guava = "33.4.5-jre"
 sqlite-jdbc = "3.45.3.0"
+javalin = "6.1.3"
+slf4j = "2.0.13"
 
 [libraries]
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite-jdbc" }
+javalin = { module = "io.javalin:javalin-bundle", version.ref = "javalin" }
