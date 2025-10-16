@@ -10,6 +10,7 @@ plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
     `java-library`
+    id("com.github.ben-manes.versions") version "0.53.0"
 }
 
 import org.gradle.api.tasks.JavaExec
@@ -23,22 +24,21 @@ dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
     implementation(libs.sqlite.jdbc)
-    implementation("org.mindrot:jbcrypt:0.4")
+    implementation(libs.jbcrypt)
     implementation(libs.javalin)
     
     // Jackson for JSON processing
-    implementation("com.fasterxml.jackson.core:jackson-core:2.17.0")
-    implementation("com.fasterxml.jackson.core:jackson-annotations:2.17.0")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0")
+    implementation(libs.jackson.core)
+    implementation(libs.jackson.annotations)
+    implementation(libs.jackson.databind)
+    implementation(libs.jackson.datatype.jsr310)
 
     // Picocli for CLI
-    implementation("info.picocli:picocli:4.7.6")
-    implementation("info.picocli:picocli-shell-jline3:4.7.6")
-    annotationProcessor("info.picocli:picocli-codegen:4.7.6")
+    implementation(libs.bundles.picocli)
+    annotationProcessor(libs.picocli.codegen)
 
     // Mockito for testing
-    testImplementation("org.mockito:mockito-core:5.12.0")
+    testImplementation(libs.mockito.core)
 }
 
 testing {
@@ -46,7 +46,7 @@ testing {
         // Configure the built-in test suite
         val test by getting(JvmTestSuite::class) {
             // Use JUnit Jupiter test framework
-            useJUnitJupiter("5.12.1")
+            useJUnitJupiter(libs.versions.junitJupiter.get())
         }
     }
 }
