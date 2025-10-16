@@ -1,5 +1,5 @@
 {
-  description = "A Node.js project development environment";
+  description = "A Java and Node.js project development environment";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -16,6 +16,8 @@
           packages = with pkgs; [
             jdk
             gradle
+            nodejs_22
+            yarn
           ];
         };
       });

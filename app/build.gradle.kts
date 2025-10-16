@@ -12,6 +12,8 @@ plugins {
     `java-library`
 }
 
+import org.gradle.api.tasks.JavaExec
+
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
@@ -59,6 +61,11 @@ java {
 application {
     // Define the main class for the application.
     mainClass = "org.scriptorium.application.Main"
+}
+
+// Keep stdin open for interactive CLI
+tasks.withType<JavaExec> {
+    standardInput = System.`in`
 }
 
 tasks.jar {

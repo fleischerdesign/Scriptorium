@@ -10,8 +10,6 @@ import java.util.concurrent.Callable;
 import java.util.Optional;
 import java.lang.ProcessHandle;
 
-import org.scriptorium.cli.commands.ServerCommand;
-
 /**
  * Picocli command to stop the Scriptorium API server.
  * This command reads the PID from a file and attempts to terminate the process.

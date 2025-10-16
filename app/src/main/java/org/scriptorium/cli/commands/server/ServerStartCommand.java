@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
-import org.scriptorium.cli.commands.ServerCommand;
-
 /**
  * Picocli command to start the Scriptorium API server as a separate process.
  * This command allows me to launch the web API in the background,

@@ -1,7 +1,6 @@
 package org.scriptorium.cli;
 
 import org.scriptorium.cli.commands.ExitCommand;
-import org.scriptorium.cli.commands.ServerCommand;
 import org.scriptorium.cli.commands.author.AuthorCommand;
 import org.scriptorium.cli.commands.book.BookCommand;
 import org.scriptorium.cli.commands.genre.GenreCommand;
@@ -9,6 +8,7 @@ import org.scriptorium.cli.commands.loan.LoanCommand;
 import org.scriptorium.cli.commands.publisher.PublisherCommand;
 import org.scriptorium.cli.commands.user.UserCommand;
 import org.scriptorium.cli.commands.reservation.ReservationCommand;
+import org.scriptorium.cli.commands.server.ServerCommand;
 import org.scriptorium.cli.commands.copy.CopyCommand; // New
 import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;
