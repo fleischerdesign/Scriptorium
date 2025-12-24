@@ -8,16 +8,16 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Type;
 
 /**
- * Custom JSON mapper for Javalin that uses Jackson for serialization and deserialization.
- * I've implemented this to ensure proper handling of Java 8 Date and Time API types
- * (like `LocalDateTime`, `LocalDate`, etc.) when converting to/from JSON.
+ * A custom JSON mapper for Javalin that uses Jackson for serialization and deserialization.
+ * This implementation ensures proper handling of Java 8 Date and Time API types
+ * (like `LocalDateTime`) during JSON conversion.
  */
 public class JacksonJsonMapper implements JsonMapper {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
-     * Initializes the Jackson ObjectMapper. I'm registering the `JavaTimeModule`
-     * here to make sure Jackson knows how to serialize and deserialize Java 8
+     * Initializes the Jackson ObjectMapper and registers the `JavaTimeModule`.
+     * This module provides support for serializing and deserializing Java 8
      * date and time objects.
      */
     public JacksonJsonMapper() {

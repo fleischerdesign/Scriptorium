@@ -10,9 +10,9 @@ import org.scriptorium.core.services.AuthorService;
 public class AuthorController extends CrudController<Author, Long, AuthorService> {
 
     /**
-     * Constructs an AuthorController with the necessary AuthorService.
-     * I'm using dependency injection here to provide the service.
-     * @param authorService The service for author operations.
+     * Constructs an AuthorController.
+     *
+     * @param authorService The service for author operations, injected via dependency injection.
      */
     public AuthorController(AuthorService authorService) {
         super(authorService);

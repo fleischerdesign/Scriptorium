@@ -10,9 +10,9 @@ import org.scriptorium.core.services.CopyService;
 public class CopyController extends CrudController<Copy, Long, CopyService> {
 
     /**
-     * Constructs a CopyController with the necessary CopyService.
-     * I'm using dependency injection here to provide the service.
-     * @param copyService The service for copy operations.
+     * Constructs a CopyController.
+     *
+     * @param copyService The service for copy operations, injected via dependency injection.
      */
     public CopyController(CopyService copyService) {
         super(copyService);

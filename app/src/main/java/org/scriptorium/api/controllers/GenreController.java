@@ -10,9 +10,9 @@ import org.scriptorium.core.services.GenreService;
 public class GenreController extends CrudController<Genre, Long, GenreService> {
 
     /**
-     * Constructs a GenreController with the necessary GenreService.
-     * I'm using dependency injection here to provide the service.
-     * @param genreService The service for genre operations.
+     * Constructs a GenreController.
+     *
+     * @param genreService The service for genre operations, injected via dependency injection.
      */
     public GenreController(GenreService genreService) {
         super(genreService);

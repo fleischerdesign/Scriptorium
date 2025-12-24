@@ -15,9 +15,8 @@ public class ApiServer {
     private final Javalin app;
 
     /**
-     * Initializes the Javalin application. I've configured it to use my custom
-     * JacksonJsonMapper for JSON serialization/deserialization and enabled
-     * CORS for all hosts to allow frontend applications to access the API.
+     * Initializes the Javalin application, configuring it to use a custom
+     * JacksonJsonMapper for JSON processing and enabling CORS for all hosts.
      */
     public ApiServer() {
         this.app = Javalin.create(config -> {
@@ -46,9 +45,9 @@ public class ApiServer {
 
     /**
      * Defines and registers all API routes with the Javalin application.
-     * I'm now passing in a list of CrudController instances, which makes the route
-     * definition much cleaner and more scalable. Each controller is responsible
-     * for registering its own routes.
+     * Routes are defined by iterating through the provided list of controllers,
+     * allowing each controller to register its own endpoints. This approach
+     * makes route definition cleaner and more scalable.
      *
      * @param controllers A list of CrudController instances to register routes from.
      */

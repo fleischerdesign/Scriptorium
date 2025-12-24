@@ -10,9 +10,9 @@ import org.scriptorium.core.services.BookService;
 public class BookController extends CrudController<Book, Long, BookService> {
 
     /**
-     * Constructs a BookController with the necessary BookService.
-     * I'm using dependency injection here to provide the service.
-     * @param bookService The service for book operations.
+     * Constructs a BookController.
+     *
+     * @param bookService The service for book operations, injected via dependency injection.
      */
     public BookController(BookService bookService) {
         super(bookService);

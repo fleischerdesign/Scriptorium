@@ -10,9 +10,9 @@ import org.scriptorium.core.services.ReservationService;
 public class ReservationController extends CrudController<Reservation, Long, ReservationService> {
 
     /**
-     * Constructs a ReservationController with the necessary ReservationService.
-     * I'm using dependency injection here to provide the service.
-     * @param reservationService The service for reservation operations.
+     * Constructs a ReservationController.
+     *
+     * @param reservationService The service for reservation operations, injected via dependency injection.
      */
     public ReservationController(ReservationService reservationService) {
         super(reservationService);

@@ -14,9 +14,8 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 
 /**
- * Picocli command to start the Scriptorium API server as a separate process.
- * This command allows me to launch the web API in the background,
- * optionally specifying a custom port, and immediately returns control to the CLI.
+ * A Picocli command to start the Scriptorium API server as a separate background process.
+ * This allows the CLI to remain responsive after launching the server.
  */
 @Command(name = "start", description = "Starts the API server.")
 public class ServerStartCommand implements Callable<Integer> {

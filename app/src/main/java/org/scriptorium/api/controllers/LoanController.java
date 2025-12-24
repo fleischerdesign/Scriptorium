@@ -10,9 +10,9 @@ import org.scriptorium.core.services.LoanService;
 public class LoanController extends CrudController<Loan, Long, LoanService> {
 
     /**
-     * Constructs a LoanController with the necessary LoanService.
-     * I'm using dependency injection here to provide the service.
-     * @param loanService The service for loan operations.
+     * Constructs a LoanController.
+     *
+     * @param loanService The service for loan operations, injected via dependency injection.
      */
     public LoanController(LoanService loanService) {
         super(loanService);

@@ -128,8 +128,8 @@ public class DependencyFactory implements CommandLine.IFactory {
     private final CopyService copyService;     // New
 
     /**
-     * Constructor for DependencyFactory. I'm initializing all my service and repository
-     * instances here. This ensures that all dependencies are set up once and are ready
+     * Constructs the DependencyFactory and initializes all service and repository instances.
+     * This ensures that all dependencies are created as singletons and are ready
      * for injection into commands or the API server.
      */
     public DependencyFactory() {

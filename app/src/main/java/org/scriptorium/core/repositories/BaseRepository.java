@@ -7,7 +7,7 @@ import java.util.Optional;
 
 /**
  * Base interface for all repositories, defining common CRUD operations.
- * I'm using generics here to make it reusable for any entity type (T) and ID type (ID).
+ * This interface uses generics to be reusable for any entity type (T) and ID type (ID).
  * @param <T> The type of the entity.
  * @param <ID> The type of the entity's ID.
  */

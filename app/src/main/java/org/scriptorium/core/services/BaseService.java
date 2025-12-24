@@ -8,7 +8,7 @@ import java.util.Optional;
 
 /**
  * Abstract base class for all services, providing common CRUD operations.
- * I'm using generics here to make it reusable for any entity type (T) and ID type (ID).
+ * This class uses generics to be reusable for any entity type (T) and ID type (ID).
  * It depends on a {@link BaseRepository} to perform data access operations.
  * @param <T> The type of the entity.
  * @param <ID> The type of the entity's ID.

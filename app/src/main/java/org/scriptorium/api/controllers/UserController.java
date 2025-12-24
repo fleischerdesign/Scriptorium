@@ -10,9 +10,9 @@ import org.scriptorium.core.services.UserService;
 public class UserController extends CrudController<User, Long, UserService> {
 
     /**
-     * Constructs a UserController with the necessary UserService.
-     * I'm using dependency injection here to provide the service.
-     * @param userService The service for user operations.
+     * Constructs a UserController.
+     *
+     * @param userService The service for user operations, injected via dependency injection.
      */
     public UserController(UserService userService) {
         super(userService);
