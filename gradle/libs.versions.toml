@@ -1,7 +1,7 @@
 [versions]
 guava = "33.5.0-jre"
 sqlite-jdbc = "3.50.3.0"
-javalin = "6.7.0"
+javalin = "7.2.2"
 slf4j = "2.0.13"
 jbcrypt = "0.4"
 picocli = "4.7.7"
