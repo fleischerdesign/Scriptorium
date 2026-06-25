@@ -9,7 +9,7 @@ mockito = "5.20.0"
 junitJupiter = "5.12.1"
 
 # Inconsistent jackson versions
-jacksonCore = "2.20.0"
+jacksonCore = "2.22.0"
 jacksonAnnotations = "2.20"
 
 [libraries]
