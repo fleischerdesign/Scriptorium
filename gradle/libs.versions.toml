@@ -1,5 +1,5 @@
 [versions]
-guava = "33.5.0-jre"
+guava = "33.6.0-jre"
 sqlite-jdbc = "3.50.3.0"
 javalin = "6.7.0"
 slf4j = "2.0.13"
@@ -9,7 +9,7 @@ mockito = "5.20.0"
 junitJupiter = "5.12.1"
 
 # Inconsistent jackson versions
-jacksonCore = "2.20.0"
+jacksonCore = "2.22.0"
 jacksonAnnotations = "2.20"
 
 [libraries]
