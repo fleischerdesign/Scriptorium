@@ -10,7 +10,7 @@ junitJupiter = "5.12.1"
 
 # Inconsistent jackson versions
 jacksonCore = "2.22.0"
-jacksonAnnotations = "2.20"
+jacksonAnnotations = "2.22"
 
 [libraries]
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
